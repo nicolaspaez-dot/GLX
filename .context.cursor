@@ -1,0 +1,92 @@
+# Proyecto: Nico Lang
+
+# Descripción: Un lenguaje de programación personalizado
+
+## Contexto del Proyecto
+
+📌 Resumen del Proyecto
+El proyecto consiste en el diseño e implementación de un lenguaje de programación propio, de tipo interpretado, orientado específicamente al control de hardware gráfico (GPU) desde sistemas Linux. El lenguaje se denomina GLX (gpu linux extencion), y su enfoque principal es brindar a usuarios avanzados una herramienta simple, directa y personalizable para modificar parámetros de rendimiento de la GPU en tiempo real o mediante scripts.
+
+💡 Objetivo General
+Desarrollar un lenguaje de alto nivel minimalista que permita controlar, ajustar y automatizar configuraciones de GPU (como frecuencia de reloj, límites de energía, velocidad de ventiladores, modos de rendimiento y resolución de pantalla), de manera accesible y eficiente desde la línea de comandos o mediante archivos .glx.
+
+🔧 Herramientas y Tecnologías
+🧠 Lenguaje de implementación
+C (lenguaje principal):
+
+Utilizado para construir el intérprete del lenguaje.
+
+Permite control directo de bajo nivel y eficiencia en la manipulación del sistema.
+
+Se prioriza código limpio, modular y portable.
+
+🖥️ Sistema operativo de desarrollo
+Arch Linux con entorno Budgie (XFCE4 personalizado)
+
+Terminal principal: Alacritty
+
+Arquitectura objetivo: x86_64 (Intel Core i5 12ª Gen + NVIDIA RTX 3050)
+
+🎮 Control de GPU
+Herramientas utilizadas por el lenguaje para ejecutar comandos:
+
+nvidia-smi → para gestionar clocks, modos de rendimiento, límites de energía.
+
+nvidia-settings → para ajustar fan speed, overclock, etc.
+
+xrandr → para manejar resoluciones, tasas de refresco, salidas HDMI/DisplayPort.
+
+📁 Estructura del lenguaje
+Sintaxis inspirada en Bash y JSON simplificado, para permitir fácil adopción.
+
+Soporte inicial para 4 modos preestablecidos:
+
+quiet: silencioso, mínima energía y ruido.
+
+balanced: mezcla entre rendimiento y consumo.
+
+performance: máximo rendimiento.
+
+custom: valores definidos por el usuario.
+
+Ejemplo de script .glx:
+
+# Ejemplo de sintaxis
+
+modo: quiet
+- power_limit: 80
+- fan_speed: 30
+- clocks: 300,800
+- persist_mode: on
+
+modo: balanced
+- power_limit: 100
+- fan_speed: 50
+- clocks: 500,1200
+- persist_mode: on
+
+modo: performance
+- power_limit: 130
+- fan_speed: 80
+- clocks: 800,1800
+- persist_mode: on
+
+🔨 Toolchain
+Sistema de build propio con Makefile para compilar fuentes .glx a ejecutables.
+
+Opcional: integración futura con LLVM o generación intermedia en C para facilitar portabilidad.
+
+📦 Resultado esperado
+Binario nativo por cada archivo .glx compilado.
+
+Al ejecutarse, el binario configura la GPU según lo indicado.
+
+Permite integración en scripts de sistema, CRON jobs o herramientas gráficas.
+
+## IMPORTANTE
+- ES MI PRIMERA VEZ INTENTANDO HACER UN LENGUAJE. EXPLICA EN TODO MOMENTO LOS ERRORES, CORRECCIONES O SINTAXIS QUE VAS A HACER O QUE FALTA.
+- HACER CAMBIOS PEQUEÑOS Y GRADUALES EN EL CÓDIGO, EXPLICANDO CADA PARTE PARA FACILITAR EL APRENDIZAJE.
+- TENES QUE SIEMPRE TODO A DETALLE. IMPULSAME A IMPLEMENTAR CODIGO A MANO CON TU GUIA, SIN QUE VOS IMPLEMENTES TODO
+
+
+
