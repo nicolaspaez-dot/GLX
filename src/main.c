@@ -2,6 +2,38 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/lexer.h"
+#include "../include/parser.h"
+
+// Función auxiliar para imprimir el AST
+void print_ast(ASTNode* node, int depth) {
+    if (!node) return;
+
+    // Imprimir indentación
+    for (int i = 0; i < depth; i++) {
+        printf("  ");
+    }
+
+    // Imprimir tipo de nodo y valor
+    printf("- Type: ");
+    switch (node->type) {
+        case NODE_PROGRAM: printf("PROGRAM"); break;
+        case NODE_DECLARATION: printf("DECLARATION"); break;
+        case NODE_ASSIGNMENT: printf("ASSIGNMENT"); break;
+        case NODE_IDENTIFIER: printf("IDENTIFIER"); break;
+        case NODE_NUMBER: printf("NUMBER"); break;
+        case NODE_STRING: printf("STRING"); break;
+        case NODE_GPU_COMMAND: printf("GPU_COMMAND"); break;
+    }
+    if (node->value) {
+        printf(", Value: %s", node->value);
+    }
+    printf("\n");
+
+    // Imprimir nodos hijos
+    for (int i = 0; i < node->num_children; i++) {
+        print_ast(node->children[i], depth + 1);
+    }
+}
 
 int main() {
     FILE* archivo;
@@ -14,16 +46,25 @@ int main() {
     }
 
     while (fgets(linea, sizeof(linea), archivo)) {
-        printf("Línea: %s", linea);
+        printf("\nProcesando línea: %s", linea);
 
-        int cantidad = 0;
-        char** tokens = lexer_tokenize(linea, &cantidad);
+        // Fase 1: Lexer
+        int cantidad_tokens = 0;
+        char** tokens = lexer_tokenize(linea, &cantidad_tokens);
 
-        for (int i = 0; i < cantidad; i++) {
+        printf("Tokens encontrados:\n");
+        for (int i = 0; i < cantidad_tokens; i++) {
             printf("  Token[%d]: %s\n", i, tokens[i]);
         }
 
-        liberar_tokens(tokens, cantidad);
+        // Fase 2: Parser
+        printf("\nÁrbol de sintaxis abstracta (AST):\n");
+        ASTNode* ast = parser_parse(tokens, cantidad_tokens);
+        print_ast(ast, 0);
+
+        // Limpieza
+        parser_free_ast(ast);
+        liberar_tokens(tokens, cantidad_tokens);
     }
 
     fclose(archivo);
