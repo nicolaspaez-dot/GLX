@@ -7,7 +7,7 @@
 void agregar_token(char*** tokens, int* cantidad, const char* valor) {
     *tokens = realloc(*tokens, (*cantidad + 1) * sizeof(char*));
     (*tokens)[*cantidad] = strdup(valor);
-    (*cantidad)++;
+    (*cantidad)++; 
 }
 
 char** lexer_tokenize(const char* linea, int* cantidad) {
@@ -16,14 +16,15 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
     char** tokens = NULL;
     *cantidad = 0;
     
-    // Primero separa solo por espacios y saltos de lnea
+    // Primero separa solo por espacios y saltos de línea
     token = strtok(copia, " \t\n");
     while (token != NULL) {
-        // Buscamos si hay dos puntos en el token
+        // Buscamos si hay dos puntos o igual en el token
         char* dos_puntos = strchr(token, ':');
+        char* igual = strchr(token, '=');
         
         if (dos_puntos != NULL) {
-            // Si el token tiene ":", se divid en partes
+            // Si el token tiene ":", se divide en partes
             *dos_puntos = '\0';  // Dividimos el string en el ":"
             
             // Agregamos la parte antes del ":"
@@ -38,8 +39,24 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
             if (strlen(dos_puntos + 1) > 0) {
                 agregar_token(&tokens, cantidad, dos_puntos + 1);
             }
+        } else if (igual != NULL) {
+            // Si el token tiene "=", se divide en partes
+            *igual = '\0';  // Dividimos el string en el "="
+            
+            // Agregamos la parte antes del "="
+            if (strlen(token) > 0) {
+                agregar_token(&tokens, cantidad, token);
+            }
+            
+            // Agregamos el "=" como token
+            agregar_token(&tokens, cantidad, "=");
+            
+            // Agregamos la parte después del "=" si existe
+            if (strlen(igual + 1) > 0) {
+                agregar_token(&tokens, cantidad, igual + 1);
+            }
         } else {
-            // Si no hay ":", agregamos el token completo
+            // Si no hay ":" ni "=", agregamos el token completo
             agregar_token(&tokens, cantidad, token);
         }
         

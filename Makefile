@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Iinclude -Wall
-SRC=src/main.c src/lexer.c src/parser.c
+SRC=src/main.c src/lexer.c src/parser.c src/interpreter.c
 OUT=build/nico
 
 all:

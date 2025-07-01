@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "../include/parser.h"
 
 // Crear un nuevo nodo del AST
@@ -40,12 +41,42 @@ void advance_token(Parser* parser) {
     parser->current_pos++;
 }
 
+// Verificar si un string es un número
+int is_number(const char* str) {
+    if (!str || strlen(str) == 0) return 0;
+    
+    // Verificar si todos los caracteres son dígitos
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) return 0;
+    }
+    return 1;
+}
+
+// Crear un nodo del tipo correcto basado en el valor
+ASTNode* create_value_node(const char* value) {
+    if (is_number(value)) {
+        return create_node(NODE_NUMBER, value);
+    } else {
+        // Si no es número, es un identificador (variable o string)
+        return create_node(NODE_IDENTIFIER, value);
+    }
+}
+
 // Parsear una declaración o asignación
 ASTNode* parse_statement(Parser* parser) {
     char* token = current_token(parser);
     if (!token) return NULL;
 
-    // Por ahora, asumimos que cualquier token seguido de ":" es una declaración
+    // Ignorar comentarios (líneas que empiecen con #)
+    if (strcmp(token, "#") == 0) {
+        // Saltar toda la línea (todos los tokens restantes)
+        while (parser->current_pos < parser->num_tokens) {
+            advance_token(parser);
+        }
+        return NULL; // No crear nodo para comentarios
+    }
+
+    // Verificar si es una declaración (token seguido de ":")
     char* next_token = (parser->current_pos + 1 < parser->num_tokens) ? 
                       parser->tokens[parser->current_pos + 1] : NULL;
     
@@ -54,15 +85,40 @@ ASTNode* parse_statement(Parser* parser) {
         ASTNode* node = create_node(NODE_DECLARATION, token);
         advance_token(parser); // Consumir identificador
         advance_token(parser); // Consumir ":"
+        
         if (parser->current_pos < parser->num_tokens) {
-            ASTNode* value_node = create_node(NODE_IDENTIFIER, parser->tokens[parser->current_pos]);
+            char* value = parser->tokens[parser->current_pos];
+            ASTNode* value_node = create_value_node(value);
             add_child(node, value_node);
             advance_token(parser);
         }
         return node;
     }
 
-    // Por ahora, cualquier otro token lo tratamos como un comando GPU
+    // Verificar si es una asignación (token seguido de "=")
+    if (next_token && strcmp(next_token, "=") == 0) {
+        // Es una asignación de variable
+        ASTNode* node = create_node(NODE_ASSIGNMENT, token);
+        advance_token(parser); // Consumir nombre de variable
+        advance_token(parser); // Consumir "="
+        
+        if (parser->current_pos < parser->num_tokens) {
+            char* value = parser->tokens[parser->current_pos];
+            ASTNode* value_node = create_value_node(value);
+            add_child(node, value_node);
+            advance_token(parser);
+        }
+        return node;
+    }
+
+    // Verificar si es un número
+    if (is_number(token)) {
+        ASTNode* node = create_node(NODE_NUMBER, token);
+        advance_token(parser);
+        return node;
+    }
+
+    // Por defecto, tratar como comando GPU
     ASTNode* node = create_node(NODE_GPU_COMMAND, token);
     advance_token(parser);
     return node;

@@ -1,8 +1,71 @@
-hola mundo
-este es un ejemplo
-de mi lexer
-probando 1 2 3
+# Configuración de GPU - Archivo de ejemplo para GLX
+# Este archivo demuestra las funcionalidades del lenguaje
 
+# Configuración inicial
 modo: quiet
 - power_limit: 80
 - fan_speed: 30
+
+# Verificar estado actual
+status
+
+# Cambiar a modo performance
+modo: performance
+- power_limit: 95
+- fan_speed: 70
+
+# Verificar cambios
+status
+
+# Resetear a valores por defecto
+reset
+status
+
+# Comandos de prueba
+hola
+mundo
+help
+
+# Comandos desconocidos (estos SÍ aparecerán como desconocidos)
+comando_desconocido
+otra_palabra
+xyz123
+
+# Configuración de GPU con Variables - Archivo de ejemplo para GLX
+# Este archivo demuestra el uso de variables en el lenguaje
+
+# Definir variables
+mi_potencia = 85
+mi_ventilador = 60
+mi_modo = performance
+
+# Mostrar variables definidas
+vars
+
+# Usar variables en configuraciones
+modo: mi_modo
+- power_limit: mi_potencia
+- fan_speed: mi_ventilador
+
+# Verificar estado
+status
+
+# Cambiar variables y reconfigurar
+mi_potencia = 70
+mi_ventilador = 40
+mi_modo = quiet
+
+# Aplicar nuevos valores
+modo: mi_modo
+- power_limit: mi_potencia
+- fan_speed: mi_ventilador
+
+# Verificar cambios
+status
+
+# Mostrar variables finales
+vars
+
+# Resetear todo
+reset
+status

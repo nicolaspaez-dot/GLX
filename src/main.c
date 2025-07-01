@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../include/lexer.h"
 #include "../include/parser.h"
+#include "../include/interpreter.h"
 
 // Función auxiliar para imprimir el AST
 void print_ast(ASTNode* node, int depth) {
@@ -42,7 +43,7 @@ int main() {
     archivo = fopen("gx_programs/ejemplo.gx", "r");
     if (archivo == NULL) {
         perror("No se pudo abrir el archivo");
-        return 1;
+        return 1; 
     }
 
     while (fgets(linea, sizeof(linea), archivo)) {
@@ -61,6 +62,10 @@ int main() {
         printf("\nÁrbol de sintaxis abstracta (AST):\n");
         ASTNode* ast = parser_parse(tokens, cantidad_tokens);
         print_ast(ast, 0);
+
+        // Fase 3: Interpreter
+        printf("\n🎯 Ejecutando comando:\n");
+        interpret_ast(ast);
 
         // Limpieza
         parser_free_ast(ast);
