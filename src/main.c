@@ -36,14 +36,20 @@ void print_ast(ASTNode* node, int depth) {
     }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     FILE* archivo;
     char linea[256];
+    const char* nombre_archivo = "gx_programs/ejemplo.gx";
+    if (argc > 1) {
+        nombre_archivo = argv[1];
+    } else {
+        printf("[INFO] No se especificó archivo .gx, usando por defecto: %s\n", nombre_archivo);
+    }
 
-    archivo = fopen("gx_programs/ejemplo.gx", "r");
+    archivo = fopen(nombre_archivo, "r");
     if (archivo == NULL) {
         perror("No se pudo abrir el archivo");
-        return 1; 
+        return 1;
     }
 
     while (fgets(linea, sizeof(linea), archivo)) {
