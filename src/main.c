@@ -53,6 +53,13 @@ int main(int argc, char* argv[]) {
     }
 
     while (fgets(linea, sizeof(linea), archivo)) {
+        // Ignorar líneas vacías y comentarios
+        char* ptr = linea;
+        while (*ptr == ' ' || *ptr == '\t') ptr++;
+        if (*ptr == '#' || *ptr == '\0' || *ptr == '\n') {
+            continue;
+        }
+
         printf("\nProcesando línea: %s", linea);
 
         // Fase 1: Lexer

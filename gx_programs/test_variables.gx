@@ -1,0 +1,9 @@
+# TEST: Uso de variables y su aplicación en comandos
+# Prueba de variables y su uso
+a = 10
+b = 20
+c = 30
+power_limit: a
+fan_speed: b
+modo: quiet
+status 

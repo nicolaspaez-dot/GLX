@@ -1,0 +1,6 @@
+# TEST: Redefinición de variables
+# Prueba de redefinición de variable
+a = 10
+a = 20
+power_limit: a
+status 

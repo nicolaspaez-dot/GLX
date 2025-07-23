@@ -1,0 +1,3 @@
+# TEST: Uso de variable no definida
+# Prueba de variable no definida
+power_limit: x 

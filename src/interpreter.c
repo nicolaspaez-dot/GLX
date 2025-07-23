@@ -129,33 +129,33 @@ void interpret_declaration(ASTNode* node) {
                     value_type = NODE_STRING;
                 }
             } else {
-                printf("❌ Error: Variable '%s' no definida\n", value);
+                printf("\033[33m⚠️  Error: La variable '%s' no está definida. Defínela antes de usarla.\033[0m\n", value);
                 return;
             }
         }
         
         if (strcmp(node->value, "modo") == 0) {
             strcpy(gpu_mode, value);
-            printf("✅ Modo GPU cambiado a: %s\n", gpu_mode);
+            printf("\033[36m✅ Modo GPU cambiado a: %s\033[0m\n", gpu_mode);
         }
         else if (strcmp(node->value, "power_limit") == 0) {
             if (value_type == NODE_NUMBER) {
                 gpu_power_limit = atoi(value);
-                printf("✅ Límite de potencia GPU establecido a: %d%%\n", gpu_power_limit);
+                printf("\033[36m✅ Límite de potencia GPU establecido a: %d%%\033[0m\n", gpu_power_limit);
             } else {
-                printf("❌ Error: power_limit debe ser un número, no '%s'\n", value);
+                printf("\033[33m⚠️  Error: 'power_limit' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "fan_speed") == 0) {
             if (value_type == NODE_NUMBER) {
                 gpu_fan_speed = atoi(value);
-                printf("✅ Velocidad del ventilador GPU establecida a: %d%%\n", gpu_fan_speed);
+                printf("\033[36m✅ Velocidad del ventilador GPU establecida a: %d%%\033[0m\n", gpu_fan_speed);
             } else {
-                printf("❌ Error: fan_speed debe ser un número, no '%s'\n", value);
+                printf("\033[33m⚠️  Error: 'fan_speed' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else {
-            printf("📝 Variable desconocida: %s = %s\n", node->value, value);
+            printf("\033[33m📝 Advertencia: Variable o comando desconocido '%s'.\033[0m\n", node->value);
         }
     }
 }
@@ -191,16 +191,16 @@ void interpret_string(ASTNode* node) {
 // Interpretar un comando GPU
 void interpret_gpu_command(ASTNode* node) {
     if (strcmp(node->value, "status") == 0) {
-        printf("📊 Estado actual de la GPU:\n");
+        printf("\033[36m📊 Estado actual de la GPU:\n");
         printf("   Modo: %s\n", gpu_mode);
         printf("   Límite de potencia: %d%%\n", gpu_power_limit);
-        printf("   Velocidad del ventilador: %d%%\n", gpu_fan_speed);
+        printf("   Velocidad del ventilador: %d%%\033[0m\n", gpu_fan_speed);
     }
     else if (strcmp(node->value, "reset") == 0) {
         gpu_power_limit = 100;
         gpu_fan_speed = 50;
         strcpy(gpu_mode, "normal");
-        printf("🔄 GPU reseteada a configuración por defecto\n");
+        printf("\033[36m🔄 GPU reseteada a configuración por defecto\033[0m\n");
     }
     else if (strcmp(node->value, "-") == 0) {
         // El guión "-" indica configuración, no hace nada por sí solo
@@ -209,15 +209,15 @@ void interpret_gpu_command(ASTNode* node) {
         // Los comentarios no hacen nada
     }
     else if (strcmp(node->value, "hola") == 0) {
-        printf("👋 ¡Hola! Bienvenido al controlador de GPU\n");
+        printf("\033[36m👋 ¡Hola! Bienvenido al controlador de GPU\033[0m\n");
     }
     else if (strcmp(node->value, "mundo") == 0) {
-        printf("🌍 ¡Hola mundo desde GLX!\n");
+        printf("\033[36m🌍 ¡Hola mundo desde GLX!\033[0m\n");
     }
     else if (strcmp(node->value, "vars") == 0) {
-        printf("📋 Variables definidas:\n");
+        printf("\033[36m📋 Variables definidas:\n");
         if (num_variables == 0) {
-            printf("   (ninguna variable definida)\n");
+            printf("   (ninguna variable definida)\033[0m\n");
         } else {
             for (int i = 0; i < num_variables; i++) {
                 printf("   %s = %s (%s)\n", 
@@ -225,19 +225,20 @@ void interpret_gpu_command(ASTNode* node) {
                        variables[i].value,
                        variables[i].is_number ? "número" : "texto");
             }
+            printf("\033[0m");
         }
     }
     else if (strcmp(node->value, "help") == 0) {
-        printf("📚 Comandos disponibles:\n");
+        printf("\033[36m📚 Comandos disponibles:\n");
         printf("   status - Mostrar estado de la GPU\n");
         printf("   reset - Resetear a valores por defecto\n");
         printf("   vars - Mostrar variables definidas\n");
         printf("   modo: [quiet/performance/normal] - Cambiar modo\n");
         printf("   power_limit: [número] - Establecer límite de potencia\n");
         printf("   fan_speed: [número] - Establecer velocidad del ventilador\n");
-        printf("   variable = valor - Definir una variable\n");
+        printf("   variable = valor - Definir una variable\033[0m\n");
     }
     else {
-        printf("❌ Comando GPU desconocido: %s (escribe 'help' para ver comandos disponibles)\n", node->value);
+        printf("\033[33m⚠️  Comando GPU desconocido: '%s'. Escribe 'help' para ver los comandos disponibles.\033[0m\n", node->value);
     }
 }

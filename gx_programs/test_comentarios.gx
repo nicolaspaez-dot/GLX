@@ -1,0 +1,7 @@
+# TEST: Comentarios y líneas vacías
+# Esto es un comentario
+
+modo: performance   # Cambia el modo
+# Otra línea de comentario
+
+status 
