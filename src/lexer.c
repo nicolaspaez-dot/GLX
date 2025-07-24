@@ -16,53 +16,45 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
     char** tokens = NULL;
     *cantidad = 0;
     
-    // Primero separa solo por espacios y saltos de línea
-    token = strtok(copia, " \t\n");
-    while (token != NULL) {
-        // Buscamos si hay dos puntos o igual en el token
-        char* dos_puntos = strchr(token, ':');
-        char* igual = strchr(token, '=');
-        
-        if (dos_puntos != NULL) {
-            // Si el token tiene ":", se divide en partes
-            *dos_puntos = '\0';  // Dividimos el string en el ":"
-            
-            // Agregamos la parte antes del ":"
-            if (strlen(token) > 0) {
-                agregar_token(&tokens, cantidad, token);
-            }
-            
-            // Agregamos el ":" como token
-            agregar_token(&tokens, cantidad, ":");
-            
-            // Agregamos la parte después del ":" si existe
-            if (strlen(dos_puntos + 1) > 0) {
-                agregar_token(&tokens, cantidad, dos_puntos + 1);
-            }
-        } else if (igual != NULL) {
-            // Si el token tiene "=", se divide en partes
-            *igual = '\0';  // Dividimos el string en el "="
-            
-            // Agregamos la parte antes del "="
-            if (strlen(token) > 0) {
-                agregar_token(&tokens, cantidad, token);
-            }
-            
-            // Agregamos el "=" como token
-            agregar_token(&tokens, cantidad, "=");
-            
-            // Agregamos la parte después del "=" si existe
-            if (strlen(igual + 1) > 0) {
-                agregar_token(&tokens, cantidad, igual + 1);
-            }
-        } else {
-            // Si no hay ":" ni "=", agregamos el token completo
-            agregar_token(&tokens, cantidad, token);
+    char* ptr = copia;
+    while (*ptr) {
+        // Saltar espacios y tabs
+        while (*ptr == ' ' || *ptr == '\t' || *ptr == '\n') ptr++;
+        if (*ptr == '\0') break;
+
+        // Soporte para strings entre comillas dobles
+        if (*ptr == '"') {
+            ptr++; // Saltar la comilla inicial
+            char* start = ptr;
+            while (*ptr && *ptr != '"') ptr++;
+            size_t len = ptr - start;
+            char* str_token = (char*)malloc(len + 3); // +2 para comillas, +1 para null
+            str_token[0] = '"';
+            strncpy(str_token + 1, start, len);
+            str_token[len + 1] = '"';
+            str_token[len + 2] = '\0';
+            agregar_token(&tokens, cantidad, str_token);
+            free(str_token);
+            if (*ptr == '"') ptr++; // Saltar la comilla final
+            continue;
         }
-        
-        token = strtok(NULL, " \t\n");
+
+        // Buscar delimitadores : o = en el token actual
+        char* start = ptr;
+        while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n' && *ptr != ':' && *ptr != '=') ptr++;
+        size_t len = ptr - start;
+        if (len > 0) {
+            char temp[256];
+            strncpy(temp, start, len);
+            temp[len] = '\0';
+            agregar_token(&tokens, cantidad, temp);
+        }
+        if (*ptr == ':' || *ptr == '=') {
+            char temp[2] = {*ptr, '\0'};
+            agregar_token(&tokens, cantidad, temp);
+            ptr++;
+        }
     }
-    
     free(copia);
     return tokens;
 }

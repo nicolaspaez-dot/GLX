@@ -56,8 +56,17 @@ int is_number(const char* str) {
 ASTNode* create_value_node(const char* value) {
     if (is_number(value)) {
         return create_node(NODE_NUMBER, value);
+    } else if (value && value[0] == '"' && value[strlen(value)-1] == '"' && strlen(value) >= 2) {
+        // Si empieza y termina con comillas dobles, es un string
+        // Crear el string sin las comillas
+        char* sin_comillas = (char*)malloc(strlen(value) - 1);
+        strncpy(sin_comillas, value + 1, strlen(value) - 2);
+        sin_comillas[strlen(value) - 2] = '\0';
+        ASTNode* node = create_node(NODE_STRING, sin_comillas);
+        free(sin_comillas);
+        return node;
     } else {
-        // Si no es número, es un identificador (variable o string)
+        // Si no es número ni string, es un identificador (variable)
         return create_node(NODE_IDENTIFIER, value);
     }
 }

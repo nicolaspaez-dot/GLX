@@ -1,0 +1,15 @@
+# Ejemplo: Demuestra la advertencia al sobrescribir variables existentes
+# Al ejecutar este archivo, el intérprete debe mostrar advertencias en amarillo cuando una variable es sobrescrita
+
+# Caso 1: Sobrescribir variable numérica
+temp = 10
+temp = 20
+
+# Caso 2: Sobrescribir variable de texto
+nombre = Juan
+nombre = Pedro
+
+# Caso 3: Sobrescribir varias veces
+x = 1
+x = 2
+x = 3 

@@ -36,6 +36,35 @@ Variable* find_variable(const char* name) {
 void set_variable(const char* name, const char* value, int is_number) {
     Variable* var = find_variable(name);
     if (var) {
+        // Validación estricta de tipo
+        if (var->is_number != is_number) {
+            printf("\033[31m⛔ Error crítico: Conflicto de tipos al asignar a la variable '%s'. ", name);
+            if (var->is_number) {
+                printf("La variable fue definida como número y se intenta asignar texto.\033[0m\n");
+            } else {
+                printf("La variable fue definida como texto y se intenta asignar un número.\033[0m\n");
+            }
+            exit(1);
+        }
+        // Advertencia de sobrescritura
+        printf("\033[33m📝 Advertencia: La variable '%s' ya existía y será sobrescrita.\033[0m\n", name);
+        char respuesta[10];
+        while (1) {
+            printf("¿Desea continuar? (y/n): ");
+            if (fgets(respuesta, sizeof(respuesta), stdin) != NULL) {
+                // Eliminar salto de línea
+                size_t len = strlen(respuesta);
+                if (len > 0 && respuesta[len-1] == '\n') respuesta[len-1] = '\0';
+                if (strcmp(respuesta, "y") == 0 || strcmp(respuesta, "Y") == 0) {
+                    break; // Continuar
+                } else if (strcmp(respuesta, "n") == 0 || strcmp(respuesta, "N") == 0) {
+                    printf("\033[31m⛔ Ejecución abortada por el usuario.\033[0m\n");
+                    exit(1);
+                } else {
+                    printf("Por favor, responda 'y' para continuar o 'n' para abortar.\n");
+                }
+            }
+        }
         // Actualizar variable existente
         strcpy(var->value, value);
         var->is_number = is_number;
@@ -129,8 +158,8 @@ void interpret_declaration(ASTNode* node) {
                     value_type = NODE_STRING;
                 }
             } else {
-                printf("\033[33m⚠️  Error: La variable '%s' no está definida. Defínela antes de usarla.\033[0m\n", value);
-                return;
+                printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
+                exit(1);
             }
         }
         
@@ -140,7 +169,12 @@ void interpret_declaration(ASTNode* node) {
         }
         else if (strcmp(node->value, "power_limit") == 0) {
             if (value_type == NODE_NUMBER) {
-                gpu_power_limit = atoi(value);
+                int val = atoi(value);
+                if (val < 0 || val > 100) {
+                    printf("\033[31m⛔ Error crítico: 'power_limit' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    exit(1);
+                }
+                gpu_power_limit = val;
                 printf("\033[36m✅ Límite de potencia GPU establecido a: %d%%\033[0m\n", gpu_power_limit);
             } else {
                 printf("\033[33m⚠️  Error: 'power_limit' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
@@ -148,7 +182,12 @@ void interpret_declaration(ASTNode* node) {
         }
         else if (strcmp(node->value, "fan_speed") == 0) {
             if (value_type == NODE_NUMBER) {
-                gpu_fan_speed = atoi(value);
+                int val = atoi(value);
+                if (val < 0 || val > 100) {
+                    printf("\033[31m⛔ Error crítico: 'fan_speed' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    exit(1);
+                }
+                gpu_fan_speed = val;
                 printf("\033[36m✅ Velocidad del ventilador GPU establecida a: %d%%\033[0m\n", gpu_fan_speed);
             } else {
                 printf("\033[33m⚠️  Error: 'fan_speed' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
@@ -166,9 +205,23 @@ void interpret_assignment(ASTNode* node) {
         char* value = node->children[0]->value;
         NodeType value_type = node->children[0]->type;
         
+        // Si el valor es un identificador, buscar la variable
+        if (value_type == NODE_IDENTIFIER) {
+            const char* var_value = get_variable_value(value);
+            if (var_value) {
+                value = (char*)var_value;
+                if (is_variable_number(node->children[0]->value)) {
+                    value_type = NODE_NUMBER;
+                } else {
+                    value_type = NODE_STRING;
+                }
+            } else {
+                printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
+                exit(1);
+            }
+        }
         // Guardar la variable
         set_variable(node->value, value, (value_type == NODE_NUMBER));
-        
         printf("📝 Variable '%s' asignada a: %s\n", node->value, value);
     }
 }

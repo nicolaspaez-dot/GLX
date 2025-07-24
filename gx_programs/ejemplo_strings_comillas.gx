@@ -1,0 +1,14 @@
+# Ejemplo: Demuestra el soporte de strings entre comillas dobles
+# Al ejecutar este archivo, el intérprete debe reconocer los strings completos, incluyendo espacios
+
+# Caso 1: Asignar string con espacios
+descripcion = "Esto es un string con espacios"
+
+# Caso 2: Asignar string vacío
+vacio = ""
+
+# Caso 3: Asignar string con símbolos y números
+mensaje = "¡Hola, mundo! 123 @#%"
+
+# Caso 4: Usar string en declaración
+modo: "performance extendido" 

@@ -1,0 +1,4 @@
+# Ejemplo: Demuestra el error cuando se usa una variable no definida en una declaración
+# Al ejecutar este archivo, el intérprete debe abortar y mostrar un error crítico
+
+power_limit: mi_potencia 
