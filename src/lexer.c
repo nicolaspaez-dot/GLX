@@ -22,20 +22,37 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
         while (*ptr == ' ' || *ptr == '\t' || *ptr == '\n') ptr++;
         if (*ptr == '\0') break;
 
-        // Soporte para strings entre comillas dobles
+        // Soporte robusto para strings entre comillas dobles con escapes
         if (*ptr == '"') {
             ptr++; // Saltar la comilla inicial
-            char* start = ptr;
-            while (*ptr && *ptr != '"') ptr++;
-            size_t len = ptr - start;
-            char* str_token = (char*)malloc(len + 3); // +2 para comillas, +1 para null
-            str_token[0] = '"';
-            strncpy(str_token + 1, start, len);
-            str_token[len + 1] = '"';
-            str_token[len + 2] = '\0';
-            agregar_token(&tokens, cantidad, str_token);
-            free(str_token);
-            if (*ptr == '"') ptr++; // Saltar la comilla final
+            char buffer[256];
+            int buf_idx = 0;
+            buffer[buf_idx++] = '"'; // Mantener la comilla inicial en el token
+            int cerrado = 0;
+            while (*ptr && buf_idx < 254) {
+                if (*ptr == '\\') {
+                    ptr++;
+                    if (*ptr == 'n') buffer[buf_idx++] = '\n';
+                    else if (*ptr == 't') buffer[buf_idx++] = '\t';
+                    else if (*ptr == 'r') buffer[buf_idx++] = '\r';
+                    else if (*ptr == '"') buffer[buf_idx++] = '"';
+                    else if (*ptr == '\\') buffer[buf_idx++] = '\\';
+                    else if (*ptr) buffer[buf_idx++] = *ptr;
+                    if (*ptr) ptr++;
+                } else if (*ptr == '"') {
+                    buffer[buf_idx++] = '"'; // Mantener la comilla final en el token
+                    ptr++; // Saltar la comilla final
+                    cerrado = 1;
+                    break;
+                } else {
+                    buffer[buf_idx++] = *ptr;
+                    ptr++;
+                }
+            }
+            buffer[buf_idx] = '\0';
+            agregar_token(&tokens, cantidad, buffer);
+            // Si no se cerró el string, avanzar hasta el final de la comilla para no romper el flujo
+            if (!cerrado && *ptr == '"') ptr++;
             continue;
         }
 

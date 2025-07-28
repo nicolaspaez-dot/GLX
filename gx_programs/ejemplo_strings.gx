@@ -1,0 +1,6 @@
+# Prueba de strings con escapes y comillas
+saludo = "Hola\nmundo"
+frase = "Dijo: \"GLX\""
+ruta = "C:\\Users\\nico"
+tab = "uno\tdos"
+vars 

@@ -295,3 +295,15 @@ void interpret_gpu_command(ASTNode* node) {
         printf("\033[33m⚠️  Comando GPU desconocido: '%s'. Escribe 'help' para ver los comandos disponibles.\033[0m\n", node->value);
     }
 }
+
+// Listar todas las variables definidas
+void list_variables() {
+    printf("\n📋 Variables definidas:\n");
+    if (num_variables == 0) {
+        printf("  (No hay variables definidas)\n");
+        return;
+    }
+    for (int i = 0; i < num_variables; i++) {
+        printf("  - %s = %s  [%s]\n", variables[i].name, variables[i].value, variables[i].is_number ? "número" : "string");
+    }
+}
