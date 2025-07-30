@@ -1,0 +1,20 @@
+# TEST: Conflicto de tipos con diferentes variables
+# Demuestra que el sistema de detección de conflictos funciona con cualquier variable
+
+# Variable 1: x (número -> texto)
+x = 100
+texto_x = "cien"
+x = texto_x
+
+# Variable 2: velocidad (número -> texto)
+velocidad = 2000
+texto_velocidad = "alta"
+velocidad = texto_velocidad
+
+# Variable 3: estado (texto -> número)
+estado = "activo"
+estado = 1
+
+# Variable 4: config (texto -> número)
+config = "default"
+config = 0 

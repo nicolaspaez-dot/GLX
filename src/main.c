@@ -40,6 +40,53 @@ int main(int argc, char* argv[]) {
     FILE* archivo;
     char linea[256];
     const char* nombre_archivo = "gx_programs/ejemplo.gx";
+    
+    // Verificar si se pasó el comando help
+    if (argc > 1 && strcmp(argv[1], "help") == 0) {
+        printf("\033[36m📚 GLX - Controlador de GPU\n");
+        printf("Uso: gx [comando] [archivo.gx]\n\n");
+        printf("Comandos disponibles:\n");
+        printf("  help                    - Mostrar esta ayuda\n");
+        printf("  status                  - Mostrar estado de la GPU\n");
+        printf("  reset                   - Resetear GPU a valores por defecto\n");
+        printf("  vars                    - Mostrar variables definidas\n\n");
+        printf("Parámetros de GPU:\n");
+        printf("  mode: [quiet/balanced/performance] - Cambiar modo\n");
+        printf("  power_limit: [0-150]    - Establecer límite de potencia\n");
+        printf("  fan_speed: [0-100]      - Establecer velocidad del ventilador\n");
+        printf("  clocks: [0-3000]        - Establecer frecuencia de reloj\n");
+        printf("  persist: [on/off]       - Activar/desactivar modo persistente\n\n");
+        printf("Variables:\n");
+        printf("  variable = valor        - Definir una variable\n\n");
+        printf("Ejemplos:\n");
+        printf("  gx help                 - Mostrar esta ayuda\n");
+        printf("  gx status               - Mostrar estado actual\n");
+        printf("  gx archivo.gx           - Ejecutar archivo GLX\033[0m\n");
+        return 0;
+    }
+    
+    // Verificar si se pasó el comando status
+    if (argc > 1 && strcmp(argv[1], "status") == 0) {
+        printf("\033[36m📊 Estado actual de la GPU:\n");
+        printf("   Modo: normal\n");
+        printf("   Límite de potencia: 100%%\n");
+        printf("   Velocidad del ventilador: 50%%\033[0m\n");
+        return 0;
+    }
+    
+    // Verificar si se pasó el comando reset
+    if (argc > 1 && strcmp(argv[1], "reset") == 0) {
+        printf("\033[36m🔄 GPU reseteada a configuración por defecto\033[0m\n");
+        return 0;
+    }
+    
+    // Verificar si se pasó el comando vars
+    if (argc > 1 && strcmp(argv[1], "vars") == 0) {
+        printf("\033[36m📋 Variables definidas:\n");
+        printf("   (ninguna variable definida)\033[0m\n");
+        return 0;
+    }
+    
     if (argc > 1) {
         nombre_archivo = argv[1];
     } else {

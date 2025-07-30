@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Iinclude -Wall
 SRC=src/main.c src/lexer.c src/parser.c src/interpreter.c src/utils.c
-OUT=build/nico
+OUT=build/gx
 
 all:
 	mkdir -p build

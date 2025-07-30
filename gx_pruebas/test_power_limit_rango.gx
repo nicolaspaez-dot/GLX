@@ -1,0 +1,17 @@
+# TEST: Verificación del rango de power_limit
+# power_limit debe aceptar valores de 0 a 150 (inclusive)
+
+# Caso 1: Valor mínimo válido
+power_limit: 0
+
+# Caso 2: Valor máximo válido
+power_limit: 150
+
+# Caso 3: Valor fuera de rango (debería dar error)
+power_limit: 151
+
+# Caso 4: Valor negativo (debería dar error)
+power_limit: -10
+
+# Caso 5: Valor dentro del rango
+power_limit: 75 

@@ -1,12 +1,15 @@
 # Ejemplo: Demuestra el error cuando se asignan valores fuera de rango a power_limit o fan_speed
-# Al ejecutar este archivo, el intérprete debe abortar y mostrar un error crítico si el valor está fuera de 0-100
+# Al ejecutar este archivo, el intérprete debe abortar y mostrar un error crítico si el valor está fuera de rango
 
 # Caso 1: Valor dentro de rango para power_limit
-power_limit: 90
+power_limit: 140
 
-# Caso 2: Valor negativo para fan_speed
+# Caso 2: Valor fuera de rango para power_limit (debería dar error)
+power_limit: 151
+
+# Caso 3: Valor negativo para fan_speed (debería dar error)
 fan_speed: -10
 
-# Caso 3: Valor válido para ambos (no debe dar error)
+# Caso 4: Valor válido para ambos (no debe dar error)
 power_limit: 80
 fan_speed: 50 

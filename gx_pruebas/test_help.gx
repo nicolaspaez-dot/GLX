@@ -1,0 +1,9 @@
+# TEST: Comando help
+# Prueba del comando help que muestra todos los comandos disponibles
+
+# Ejecutar el comando help
+help
+
+# También podemos probar otros comandos después
+status
+vars 

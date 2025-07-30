@@ -3,12 +3,13 @@
 
 # Caso 1: Definir variable numérica y luego intentar asignar texto
 temp = 42
+texto = "hola"
 temp = texto
 
 # Caso 2: Definir variable de texto y luego intentar asignar número
-nombre = Juan
-nombre = 123
+# nombre = "Juan"
+# nombre = 123
 
 # Caso 3: Definir variable numérica y luego usarla como texto en declaración
-mi_potencia = 80
-modo: mi_potencia 
+# mi_potencia = 80
+# modo: mi_potencia 

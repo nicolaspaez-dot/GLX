@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "../include/lexer.h"
 
 // Función auxiliar: agrega un token al array de tokens
@@ -27,7 +28,8 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
         }
 
         // Ignorar guiones al inicio de línea (parte de la estructura)
-        if (*ptr == '-') {
+        // Solo si es el primer token de la línea (después de espacios)
+        if (*ptr == '-' && (*cantidad == 0 || (ptr > copia && *(ptr-1) == ' '))) {
             ptr++;
             // Saltar espacios después del guión
             while (*ptr == ' ' || *ptr == '\t') ptr++;
@@ -82,6 +84,23 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
             char temp[2] = {*ptr, '\0'};
             agregar_token(&tokens, cantidad, temp);
             ptr++;
+            
+            // Después de un delimitador, manejar números negativos correctamente
+            while (*ptr == ' ' || *ptr == '\t') ptr++;
+            if (*ptr == '-') {
+                // Es un número negativo
+                char* num_start = ptr;
+                ptr++; // Saltar el signo menos
+                while (*ptr && isdigit(*ptr)) ptr++;
+                size_t num_len = ptr - num_start;
+                if (num_len > 1) { // Al menos un dígito después del signo
+                    char temp_num[256];
+                    strncpy(temp_num, num_start, num_len);
+                    temp_num[num_len] = '\0';
+                    agregar_token(&tokens, cantidad, temp_num);
+                    continue;
+                }
+            }
         }
     }
     free(copia);
