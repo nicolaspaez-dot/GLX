@@ -6,10 +6,10 @@
 // Listas de palabras válidas para fuzzy match
 const char* modos_validos[] = {"quiet", "balanced", "performance"};
 const int num_modos = 3;
-const char* parametros_validos[] = {"power_limit", "fan_speed", "clocks", "persist"};
-const int num_parametros = 4;
-const char* comandos_gpu_validos[] = {"status", "reset", "vars", "help", "mode", "power_limit", "fan_speed"};
-const int num_comandos_gpu = 7;
+const char* parametros_validos[] = {"power_limit", "fan_speed", "clocks", "persist", "mode", "modo"};
+const int num_parametros = 6;
+const char* comandos_gpu_validos[] = {"status", "reset", "vars", "help", "mode", "modo", "power_limit", "fan_speed"};
+const int num_comandos_gpu = 8;
 
 // Función auxiliar para el mínimo de tres valores
 static int min3(int a, int b, int c) {

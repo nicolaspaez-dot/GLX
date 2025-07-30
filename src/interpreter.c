@@ -151,7 +151,7 @@ void interpret_declaration(ASTNode* node) {
         NodeType value_type = node->children[0]->type;
         
         // Primero validar si el valor es válido para el tipo de declaración
-        if (strcmp(node->value, "mode") == 0) {
+        if (strcmp(node->value, "mode") == 0 || strcmp(node->value, "modo") == 0) {
             // Para modos, validar directamente si es un modo válido
             int es_valido = 0;
             for (int i = 0; i < num_modos; i++) {

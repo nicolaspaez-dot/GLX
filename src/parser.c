@@ -145,6 +145,16 @@ ASTNode* parse_statement(Parser* parser) {
     // Por defecto, tratar como comando GPU
     ASTNode* node = create_node(NODE_GPU_COMMAND, token);
     advance_token(parser);
+    
+    // Para comandos GPU simples como status, reset, vars, help, ignorar tokens adicionales
+    if (strcmp(token, "status") == 0 || strcmp(token, "reset") == 0 || 
+        strcmp(token, "vars") == 0 || strcmp(token, "help") == 0) {
+        // Saltar todos los tokens restantes en la línea
+        while (parser->current_pos < parser->num_tokens) {
+            advance_token(parser);
+        }
+    }
+    
     return node;
 }
 
