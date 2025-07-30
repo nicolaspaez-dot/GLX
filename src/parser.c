@@ -45,8 +45,16 @@ void advance_token(Parser* parser) {
 int is_number(const char* str) {
     if (!str || strlen(str) == 0) return 0;
     
-    // Verificar si todos los caracteres son dígitos
-    for (int i = 0; str[i] != '\0'; i++) {
+    int start = 0;
+    // Permitir signo negativo al inicio
+    if (str[0] == '-') {
+        start = 1;
+        // Si solo hay un signo menos, no es un número válido
+        if (strlen(str) == 1) return 0;
+    }
+    
+    // Verificar si todos los caracteres restantes son dígitos
+    for (int i = start; str[i] != '\0'; i++) {
         if (!isdigit(str[i])) return 0;
     }
     return 1;
@@ -59,12 +67,19 @@ ASTNode* create_value_node(const char* value) {
     } else if (value && value[0] == '"' && value[strlen(value)-1] == '"' && strlen(value) >= 2) {
         // Si empieza y termina con comillas dobles, es un string
         // Crear el string sin las comillas
-        char* sin_comillas = (char*)malloc(strlen(value) - 1);
-        strncpy(sin_comillas, value + 1, strlen(value) - 2);
-        sin_comillas[strlen(value) - 2] = '\0';
-        ASTNode* node = create_node(NODE_STRING, sin_comillas);
-        free(sin_comillas);
-        return node;
+        size_t len = strlen(value);
+        if (len >= 2) {
+            char* sin_comillas = (char*)malloc(len - 1);
+            if (sin_comillas) {
+                strncpy(sin_comillas, value + 1, len - 2);
+                sin_comillas[len - 2] = '\0';
+                ASTNode* node = create_node(NODE_STRING, sin_comillas);
+                free(sin_comillas);
+                return node;
+            }
+        }
+        // Si falla malloc o len < 2, tratar como identificador
+        return create_node(NODE_IDENTIFIER, value);
     } else {
         // Si no es número ni string, es un identificador (variable)
         return create_node(NODE_IDENTIFIER, value);

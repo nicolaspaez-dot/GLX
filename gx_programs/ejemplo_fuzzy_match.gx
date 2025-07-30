@@ -1,0 +1,13 @@
+# Prueba de fuzzy match en modos, parámetros y comandos
+
+modo: quiet
+- power_limi: 90
+- fan_spped: 60
+- clocks: 1000
+- persist mode: on
+
+statuz
+vars
+help
+
+# Debería sugerir: quiet, power_limit, fan_speed, status, help

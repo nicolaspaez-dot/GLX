@@ -12,7 +12,6 @@ void agregar_token(char*** tokens, int* cantidad, const char* valor) {
 
 char** lexer_tokenize(const char* linea, int* cantidad) {
     char* copia = strdup(linea);
-    char* token;
     char** tokens = NULL;
     *cantidad = 0;
     
@@ -21,6 +20,19 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
         // Saltar espacios y tabs
         while (*ptr == ' ' || *ptr == '\t' || *ptr == '\n') ptr++;
         if (*ptr == '\0') break;
+
+        // Ignorar comentarios (todo lo que viene después de #)
+        if (*ptr == '#') {
+            break; // Terminar el procesamiento de esta línea
+        }
+
+        // Ignorar guiones al inicio de línea (parte de la estructura)
+        if (*ptr == '-') {
+            ptr++;
+            // Saltar espacios después del guión
+            while (*ptr == ' ' || *ptr == '\t') ptr++;
+            continue;
+        }
 
         // Soporte robusto para strings entre comillas dobles con escapes
         if (*ptr == '"') {
@@ -83,4 +95,3 @@ void liberar_tokens(char** tokens, int cantidad) {
     free(tokens);
 }
 
-//strtok: string y token "cosas por las que se divide"
