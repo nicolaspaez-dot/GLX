@@ -7,7 +7,7 @@ echo "🚀 Instalando GLX - GPU Linux Extension..."
 
 # Verificar si estamos en el directorio correcto
 if [ ! -f "src/main.c" ]; then
-    echo "❌ Error: Debes ejecutar este script desde el directorio nico_lang/"
+    echo "❌ Error: Debes ejecutar este script desde el directorio raíz de GLX/"
     exit 1
 fi
 
@@ -28,8 +28,8 @@ if [ ! -f "build/gx" ]; then
 fi
 
 # Verificar que modelo.txt existe
-if [ ! -f "../modelo.txt" ]; then
-    echo "❌ Error: No se encontró el archivo ../modelo.txt"
+if [ ! -f "modelo.txt" ]; then
+    echo "❌ Error: No se encontró el archivo modelo.txt"
     exit 1
 fi
 
@@ -44,7 +44,7 @@ sudo cp build/gx /usr/local/bin/gx
 
 # Copiar modelo.txt
 echo "📋 Copiando modelo.txt a /usr/local/share/glx/modelo.txt..."
-sudo cp ../modelo.txt /usr/local/share/glx/modelo.txt
+sudo cp modelo.txt /usr/local/share/glx/modelo.txt
 
 # Dar permisos de ejecución
 echo "🔐 Configurando permisos..."
