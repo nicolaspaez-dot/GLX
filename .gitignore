@@ -1,13 +1,17 @@
-# Archivos de compilación
-*.o
-*.out
+# Archivos compilados
 build/
+*.o
 *.exe
+*.out
 
 # Archivos temporales
 *.tmp
 *.temp
 *~
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
 
 # Archivos de IDE
 .vscode/
@@ -15,11 +19,7 @@ build/
 *.swp
 *.swo
 
-# Archivos del sistema
-.DS_Store
-Thumbs.db
-
-# Logs
+# Archivos de log
 *.log
 
 # Archivos de configuración local

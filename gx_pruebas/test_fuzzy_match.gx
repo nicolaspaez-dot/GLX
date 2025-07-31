@@ -1,0 +1,16 @@
+# Prueba de fuzzy match en modos, parámetros y comandos (actualizado con parámetros reales)
+
+modo: quiet
+- dynamic_bost: 0
+- cpu_max_per: 60
+- cpu_min_per: 20
+- turbo_bost: 1
+- persist_mod: 1
+- battery_conservatio: 1
+- fnlo: 0
+
+statuz
+vars
+help
+
+# Debería sugerir: quiet, dynamic_boost, cpu_max_perf, cpu_min_perf, turbo_boost, persist_mode, battery_conservation, fnlock, status, help

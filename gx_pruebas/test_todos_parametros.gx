@@ -1,0 +1,29 @@
+# Prueba de todos los parámetros del modelo (actualizado con parámetros reales)
+mode: quiet
+- dynamic_boost: 0
+- cpu_max_perf: 60
+- cpu_min_perf: 20
+- turbo_boost: 1
+- persist_mode: 1
+- battery_conservation: 1
+- fnlock: 0
+
+mode: balanced
+- dynamic_boost: 1
+- cpu_max_perf: 80
+- cpu_min_perf: 40
+- turbo_boost: 0
+- persist_mode: 1
+- battery_conservation: 0
+- fnlock: 1
+
+mode: performance
+- dynamic_boost: 1
+- cpu_max_perf: 100
+- cpu_min_perf: 60
+- turbo_boost: 0
+- persist_mode: 1
+- battery_conservation: 0
+- fnlock: 1
+
+status 

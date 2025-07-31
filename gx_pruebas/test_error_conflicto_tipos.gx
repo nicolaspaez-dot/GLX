@@ -1,0 +1,15 @@
+# Ejemplo: Demuestra el error cuando se intenta cambiar el tipo de una variable
+# Al ejecutar este archivo, el intérprete debe abortar y mostrar un error crítico en el primer conflicto de tipos
+
+# Caso 1: Definir variable numérica y luego intentar asignar texto
+temp = 42
+texto = "hola"
+temp = texto
+
+# Caso 2: Definir variable de texto y luego intentar asignar número
+# nombre = "Juan"
+# nombre = 123
+
+# Caso 3: Definir variable numérica y luego usarla como texto en declaración
+# mi_potencia = 80
+# modo: mi_potencia 

@@ -1,0 +1,9 @@
+# Este archivo solo tiene comentarios
+# Línea de comentario vacía
+
+# Comentario con espacios al inicio
+    # Comentario con tabulación
+
+mode: quiet # Comentario al final
+# Otro comentario en línea separada
+status # Comando con comentario 

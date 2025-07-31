@@ -1,0 +1,5 @@
+# TEST: Valores fuera de rango para parámetros (actualizado con parámetros reales)
+# Prueba de valores fuera de rango
+cpu_max_perf: 100
+dynamic_boost: -1
+status 

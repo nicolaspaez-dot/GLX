@@ -1,0 +1,15 @@
+# Ejemplo: Demuestra el error cuando se asignan valores fuera de rango a cpu_max_perf o dynamic_boost
+# Al ejecutar este archivo, el intérprete debe abortar y mostrar un error crítico si el valor está fuera de rango
+
+# Caso 1: Valor dentro de rango para cpu_max_perf
+cpu_max_perf: 90
+
+# Caso 2: Valor fuera de rango para cpu_max_perf (debería dar error)
+cpu_max_perf: 101
+
+# Caso 3: Valor negativo para dynamic_boost (debería dar error)
+dynamic_boost: -1
+
+# Caso 4: Valor válido para ambos (no debe dar error)
+cpu_max_perf: 80
+dynamic_boost: 1 

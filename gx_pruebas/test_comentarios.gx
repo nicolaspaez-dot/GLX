@@ -1,0 +1,22 @@
+# Este es un comentario al inicio de la línea
+mode: quiet # Comentario al final de la línea
+- dynamic_boost: 0 # Otro comentario
+- cpu_max_perf: 60
+- cpu_min_perf: 20 # Comentario explicativo
+- persist_mode: 1
+
+# Configuración para modo balanceado
+mode: balanced
+- dynamic_boost: 1
+- cpu_max_perf: 80 # Rendimiento máximo
+- cpu_min_perf: 40
+- persist_mode: 1
+
+# Configuración de alto rendimiento
+mode: performance
+- dynamic_boost: 1
+- cpu_max_perf: 100
+- cpu_min_perf: 60 # Rendimiento mínimo
+- persist_mode: 1
+
+status # Mostrar estado final 

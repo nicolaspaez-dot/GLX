@@ -1,0 +1,17 @@
+# Test del comando status mejorado
+# Este archivo prueba la nueva funcionalidad de status
+
+# Mostrar estado completo del sistema
+status
+
+# Aplicar modo quiet
+run mode:quiet
+
+# Mostrar estado después del cambio
+status
+
+# Aplicar modo performance
+run mode:performance
+
+# Mostrar estado final
+status 

@@ -1,0 +1,18 @@
+# Test del comando run mode:X
+# Este archivo prueba la nueva funcionalidad
+
+# Probar con modo quiet
+run mode:quiet
+
+# Probar con modo balanced
+run mode:balanced
+
+# Probar con modo performance
+run mode:performance
+
+# Probar con variable (usando string)
+mi_modo = "quiet"
+run mode:mi_modo
+
+# Probar con error (debería sugerir)
+run mode:quieto 
