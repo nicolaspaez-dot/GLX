@@ -16,7 +16,7 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
     char** tokens = NULL;
     *cantidad = 0;
     
-    char* ptr = copia;o
+    char* ptr = copia;
     while (*ptr) {
         // Saltar espacios y tabs
         while (*ptr == ' ' || *ptr == '\t' || *ptr == '\n') ptr++;
