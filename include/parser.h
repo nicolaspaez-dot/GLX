@@ -9,7 +9,8 @@ typedef enum {
     NODE_IDENTIFIER,   // Identificador/variable
     NODE_NUMBER,       // Número literal
     NODE_STRING,       // String literal
-    NODE_GPU_COMMAND   // Comando especifico para la GPU
+    NODE_GPU_COMMAND,  // Comando especifico para la GPU
+    NODE_RUN_COMMAND   // Comando run mode:X
 } NodeType;
 
 // Estructura para un nodo del AST

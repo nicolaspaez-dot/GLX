@@ -157,22 +157,33 @@ GPU_Mode* load_gpu_modes(const char* filename, int* num_modes) {
                 while (*value == ' ') value++; // Saltar espacios después de los dos puntos
                 
                 // Parsear según el parámetro
-                if (strcmp(param_start, "power_limit") == 0) {
-                    current_mode->power_limit = atoi(value);
-                    printf("   Power Limit: %dW\n", current_mode->power_limit);
+                if (strcmp(param_start, "dynamic_boost") == 0) {
+                    current_mode->dynamic_boost = atoi(value);
+                    printf("   Dynamic Boost: %d\n", current_mode->dynamic_boost);
                 }
-                else if (strcmp(param_start, "fan_speed") == 0) {
-                    current_mode->fan_speed = atoi(value);
-                    printf("   Fan Speed: %d%%\n", current_mode->fan_speed);
+                else if (strcmp(param_start, "cpu_max_perf") == 0) {
+                    current_mode->cpu_max_perf = atoi(value);
+                    printf("   CPU Max Performance: %d%%\n", current_mode->cpu_max_perf);
                 }
-                else if (strcmp(param_start, "clocks") == 0) {
-                    strncpy(current_mode->clocks, value, sizeof(current_mode->clocks) - 1);
-                    current_mode->clocks[sizeof(current_mode->clocks) - 1] = '\0';
-                    printf("   Clocks: %s MHz\n", current_mode->clocks);
+                else if (strcmp(param_start, "cpu_min_perf") == 0) {
+                    current_mode->cpu_min_perf = atoi(value);
+                    printf("   CPU Min Performance: %d%%\n", current_mode->cpu_min_perf);
                 }
-                else if (strcmp(param_start, "persist mode") == 0) {
-                    current_mode->persist_mode = (strcmp(value, "on") == 0) ? 1 : 0;
+                else if (strcmp(param_start, "turbo_boost") == 0) {
+                    current_mode->turbo_boost = atoi(value);
+                    printf("   Turbo Boost: %s\n", current_mode->turbo_boost ? "OFF" : "ON");
+                }
+                else if (strcmp(param_start, "persist_mode") == 0) {
+                    current_mode->persist_mode = atoi(value);
                     printf("   Persist Mode: %s\n", current_mode->persist_mode ? "ON" : "OFF");
+                }
+                else if (strcmp(param_start, "battery_conservation") == 0) {
+                    current_mode->battery_conservation = atoi(value);
+                    printf("   Battery Conservation: %s\n", current_mode->battery_conservation ? "ON" : "OFF");
+                }
+                else if (strcmp(param_start, "fnlock") == 0) {
+                    current_mode->fnlock = atoi(value);
+                    printf("   FnLock: %s\n", current_mode->fnlock ? "ON" : "OFF");
                 }
             }
         }

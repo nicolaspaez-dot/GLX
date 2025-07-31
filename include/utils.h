@@ -18,10 +18,13 @@ char* execute_system_command(const char* command);
 
 typedef struct {
     char name[50];
-    int power_limit;
-    int fan_speed;
-    char clocks[100];
+    int dynamic_boost;
+    int cpu_max_perf;
+    int cpu_min_perf;
+    int turbo_boost;
     int persist_mode;
+    int battery_conservation;
+    int fnlock;
 } GPU_Mode;
 
 GPU_Mode* load_gpu_modes(const char* filename, int* num_modes);

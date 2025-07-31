@@ -142,6 +142,43 @@ ASTNode* parse_statement(Parser* parser) {
         return node;
     }
 
+    // Verificar si es un comando "run mode:X"
+    if (strcmp(token, "run") == 0) {
+        ASTNode* node = create_node(NODE_RUN_COMMAND, token);
+        advance_token(parser); // Consumir "run"
+        
+        // Verificar que el siguiente token sea "mode"
+        if (parser->current_pos < parser->num_tokens) {
+            char* mode_token = parser->tokens[parser->current_pos];
+            if (strcmp(mode_token, "mode") == 0) {
+                advance_token(parser); // Consumir "mode"
+                
+                // Verificar que el siguiente token sea ":"
+                if (parser->current_pos < parser->num_tokens) {
+                    char* colon_token = parser->tokens[parser->current_pos];
+                    if (strcmp(colon_token, ":") == 0) {
+                        advance_token(parser); // Consumir ":"
+                        
+                        // Obtener el modo (quiet, balanced, performance)
+                        if (parser->current_pos < parser->num_tokens) {
+                            char* mode_value = parser->tokens[parser->current_pos];
+                            ASTNode* mode_node = create_node(NODE_IDENTIFIER, mode_value);
+                            add_child(node, mode_node);
+                            advance_token(parser);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Saltar todos los tokens restantes en la línea
+        while (parser->current_pos < parser->num_tokens) {
+            advance_token(parser);
+        }
+        
+        return node;
+    }
+
     // Por defecto, tratar como comando GPU
     ASTNode* node = create_node(NODE_GPU_COMMAND, token);
     advance_token(parser);

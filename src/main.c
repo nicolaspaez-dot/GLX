@@ -25,6 +25,7 @@ void print_ast(ASTNode* node, int depth) {
         case NODE_NUMBER: printf("NUMBER"); break;
         case NODE_STRING: printf("STRING"); break;
         case NODE_GPU_COMMAND: printf("GPU_COMMAND"); break;
+        case NODE_RUN_COMMAND: printf("RUN_COMMAND"); break;
     }
     if (node->value) {
         printf(", Value: %s", node->value);
@@ -71,16 +72,51 @@ int main(int argc, char* argv[]) {
     
     // Verificar si se pasó el comando status
     if (argc > 1 && strcmp(argv[1], "status") == 0) {
-        printf("\033[36m📊 Estado actual de la GPU:\n");
+        printf("\033[36m📊 Estado actual del sistema:\033[0m\n");
         
-        // Ejecutar nvidia-smi para obtener información real
+        // Información de GPU
         char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,fan.speed,temperature.gpu,clocks.current.graphics,power.limit --format=csv,noheader,nounits");
         
         if (gpu_info) {
-            printf("   %s\033[0m\n", gpu_info);
+            printf("   🎮 GPU: %s\033[0m\n", gpu_info);
             free(gpu_info);
         } else {
-            printf("   Error: No se pudo obtener información de la GPU\033[0m\n");
+            printf("   ⚠️  GPU: No se pudo obtener información\033[0m\n");
+        }
+        
+        // Información de CPU y sistema
+        char* cpu_max = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/max_perf_pct");
+        char* cpu_min = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/min_perf_pct");
+        char* dynamic_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost");
+        char* turbo_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/no_turbo");
+        char* battery_status = execute_system_command("cat /sys/class/power_supply/ACAD/online");
+        
+        if (cpu_max && cpu_min && dynamic_boost && turbo_boost && battery_status) {
+            // Eliminar saltos de línea
+            cpu_max[strcspn(cpu_max, "\n")] = 0;
+            cpu_min[strcspn(cpu_min, "\n")] = 0;
+            dynamic_boost[strcspn(dynamic_boost, "\n")] = 0;
+            turbo_boost[strcspn(turbo_boost, "\n")] = 0;
+            battery_status[strcspn(battery_status, "\n")] = 0;
+            
+            printf("   🖥️  CPU Max Performance: %s%%\n", cpu_max);
+            printf("   🖥️  CPU Min Performance: %s%%\n", cpu_min);
+            printf("   ⚡ Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
+            printf("   🚀 Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
+            printf("   🔋 Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
+            
+            free(cpu_max);
+            free(cpu_min);
+            free(dynamic_boost);
+            free(turbo_boost);
+            free(battery_status);
+        } else {
+            printf("   ⚠️  CPU/Sistema: No se pudo obtener información completa\033[0m\n");
+            if (cpu_max) free(cpu_max);
+            if (cpu_min) free(cpu_min);
+            if (dynamic_boost) free(dynamic_boost);
+            if (turbo_boost) free(turbo_boost);
+            if (battery_status) free(battery_status);
         }
         
         return 0;
@@ -96,6 +132,38 @@ int main(int argc, char* argv[]) {
     if (argc > 1 && strcmp(argv[1], "vars") == 0) {
         printf("\033[36m📋 Variables definidas:\n");
         printf("   (ninguna variable definida)\033[0m\n");
+        return 0;
+    }
+    
+    // Verificar si se pasó el comando run
+    if (argc > 1 && strcmp(argv[1], "run") == 0) {
+        if (argc < 3) {
+            printf("\033[31m❌ Error: Uso: gx run mode:[quiet/balanced/performance]\033[0m\n");
+            return 1;
+        }
+        
+        // Verificar que el segundo argumento sea "mode:X"
+        if (strncmp(argv[2], "mode:", 5) != 0) {
+            printf("\033[31m❌ Error: Uso: gx run mode:[quiet/balanced/performance]\033[0m\n");
+            return 1;
+        }
+        
+        // Crear un comando temporal para procesar
+        char temp_command[256];
+        snprintf(temp_command, sizeof(temp_command), "run %s", argv[2]);
+        
+        // Tokenizar el comando
+        int cantidad_tokens = 0;
+        char** tokens = lexer_tokenize(temp_command, &cantidad_tokens);
+        
+        // Parsear y ejecutar
+        ASTNode* ast = parser_parse(tokens, cantidad_tokens);
+        interpret_ast(ast);
+        
+        // Limpieza
+        parser_free_ast(ast);
+        liberar_tokens(tokens, cantidad_tokens);
+        
         return 0;
     }
     

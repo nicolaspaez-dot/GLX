@@ -15,5 +15,6 @@ void interpret_identifier(ASTNode* node);
 void interpret_number(ASTNode* node);
 void interpret_string(ASTNode* node);
 void interpret_gpu_command(ASTNode* node);
+void interpret_run_command(ASTNode* node);
 
 #endif // INTERPRETER_H

@@ -129,6 +129,9 @@ void interpret_ast(ASTNode* node) {
         case NODE_GPU_COMMAND:
             interpret_gpu_command(node);
             break;
+        case NODE_RUN_COMMAND:
+            interpret_run_command(node);
+            break;
     }
 }
 
@@ -455,16 +458,51 @@ void interpret_gpu_command(ASTNode* node) {
     
     // Ejecutar el comando (original o sugerido)
     if (strcmp(comando_a_ejecutar, "status") == 0) {
-        printf("\033[36m📊 Estado actual de la GPU:\n");
+        printf("\033[36m📊 Estado actual del sistema:\033[0m\n");
         
-        // Ejecutar nvidia-smi para obtener información real
+        // Información de GPU
         char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,fan.speed,temperature.gpu,clocks.current.graphics,power.limit --format=csv,noheader,nounits");
         
         if (gpu_info) {
-            printf("   %s\033[0m\n", gpu_info);
+            printf("   🎮 GPU: %s\033[0m\n", gpu_info);
             free(gpu_info);
         } else {
-            printf("   Error: No se pudo obtener información de la GPU\033[0m\n");
+            printf("   ⚠️  GPU: No se pudo obtener información\033[0m\n");
+        }
+        
+        // Información de CPU y sistema
+        char* cpu_max = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/max_perf_pct");
+        char* cpu_min = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/min_perf_pct");
+        char* dynamic_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost");
+        char* turbo_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/no_turbo");
+        char* battery_status = execute_system_command("cat /sys/class/power_supply/ACAD/online");
+        
+        if (cpu_max && cpu_min && dynamic_boost && turbo_boost && battery_status) {
+            // Eliminar saltos de línea
+            cpu_max[strcspn(cpu_max, "\n")] = 0;
+            cpu_min[strcspn(cpu_min, "\n")] = 0;
+            dynamic_boost[strcspn(dynamic_boost, "\n")] = 0;
+            turbo_boost[strcspn(turbo_boost, "\n")] = 0;
+            battery_status[strcspn(battery_status, "\n")] = 0;
+            
+            printf("   🖥️  CPU Max Performance: %s%%\n", cpu_max);
+            printf("   🖥️  CPU Min Performance: %s%%\n", cpu_min);
+            printf("   ⚡ Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
+            printf("   🚀 Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
+            printf("   🔋 Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
+            
+            free(cpu_max);
+            free(cpu_min);
+            free(dynamic_boost);
+            free(turbo_boost);
+            free(battery_status);
+        } else {
+            printf("   ⚠️  CPU/Sistema: No se pudo obtener información completa\033[0m\n");
+            if (cpu_max) free(cpu_max);
+            if (cpu_min) free(cpu_min);
+            if (dynamic_boost) free(dynamic_boost);
+            if (turbo_boost) free(turbo_boost);
+            if (battery_status) free(battery_status);
         }
     }
     else if (strcmp(comando_a_ejecutar, "reset") == 0) {
@@ -510,6 +548,168 @@ void interpret_gpu_command(ASTNode* node) {
         printf("   battery_conservation: [0/1] - Activar/desactivar conservación de batería\n");
         printf("   fnlock: [0/1] - Activar/desactivar FnLock\n");
         printf("   variable = valor - Definir una variable\033[0m\n");
+    }
+}
+
+// Interpretar un comando de ejecución (ej: "run mode: quiet")
+void interpret_run_command(ASTNode* node) {
+    if (node->num_children > 0 && node->children[0]) {
+        char* value = node->children[0]->value;
+        NodeType value_type = node->children[0]->type;
+        
+        // Si el valor es un identificador, verificar si es una variable o un modo literal
+        if (value_type == NODE_IDENTIFIER) {
+            const char* var_value = get_variable_value(value);
+            if (var_value) {
+                // Es una variable definida
+                value = (char*)var_value;
+                if (is_variable_number(node->children[0]->value)) {
+                    value_type = NODE_NUMBER;
+                } else {
+                    value_type = NODE_STRING;
+                }
+            }
+            // Si no es una variable definida, tratar como valor literal del modo
+        }
+
+        // Validar si el valor es un modo válido
+        int es_valido = 0;
+        for (int i = 0; i < num_modos; i++) {
+            if (strcmp(value, modos_validos[i]) == 0) {
+                es_valido = 1;
+                break;
+            }
+        }
+
+        if (!es_valido) {
+            const char* sugerido = sugerir_palabra(value, modos_validos, num_modos, 2);
+            if (sugerido) {
+                printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
+                // Usar el modo sugerido para la validación
+                // Validar el modo sugerido
+                int sugerido_valido = 0;
+                for (int i = 0; i < num_modos; i++) {
+                    if (strcmp(sugerido, modos_validos[i]) == 0) {
+                        sugerido_valido = 1;
+                        break;
+                    }
+                }
+                if (sugerido_valido) {
+                    printf("\033[36m✅ Aplicando modo sugerido: %s\033[0m\n", sugerido);
+                    value = (char*)sugerido;
+                } else {
+                    printf("Modo de ejecución desconocido: %s\n", value);
+                    return;
+                }
+            } else {
+                printf("Modo de ejecución desconocido: %s\n", value);
+                return;
+            }
+        }
+
+        // Cargar configuraciones desde modelo.txt
+        printf("\033[36m🔄 Cargando configuración para modo: %s\033[0m\n", value);
+        
+        int num_modes;
+        GPU_Mode* modes = load_gpu_modes("../modelo.txt", &num_modes);
+        
+        if (!modes) {
+            printf("\033[31m❌ Error: No se pudo cargar modelo.txt\033[0m\n");
+            return;
+        }
+        
+        // Buscar el modo específico
+        GPU_Mode* target_mode = NULL;
+        for (int i = 0; i < num_modes; i++) {
+            if (strcmp(modes[i].name, value) == 0) {
+                target_mode = &modes[i];
+                break;
+            }
+        }
+        
+        if (!target_mode) {
+            printf("\033[31m❌ Error: Modo '%s' no encontrado en modelo.txt\033[0m\n", value);
+            free(modes);
+            return;
+        }
+        
+        // Aplicar configuraciones
+        printf("\033[36m⚙️  Aplicando configuraciones del sistema...\033[0m\n");
+        
+        // Dynamic Boost
+        char cmd[512];
+        snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost", target_mode->dynamic_boost);
+        char* result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ Dynamic Boost: %d\033[0m\n", target_mode->dynamic_boost);
+            free(result);
+        } else {
+            printf("   ⚠️  Dynamic Boost: Error al aplicar\033[0m\n");
+        }
+        
+        // CPU Max Performance
+        snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/max_perf_pct", target_mode->cpu_max_perf);
+        result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ CPU Max Performance: %d%%\033[0m\n", target_mode->cpu_max_perf);
+            free(result);
+        } else {
+            printf("   ⚠️  CPU Max Performance: Error al aplicar\033[0m\n");
+        }
+        
+        // CPU Min Performance
+        snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/min_perf_pct", target_mode->cpu_min_perf);
+        result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ CPU Min Performance: %d%%\033[0m\n", target_mode->cpu_min_perf);
+            free(result);
+        } else {
+            printf("   ⚠️  CPU Min Performance: Error al aplicar\033[0m\n");
+        }
+        
+        // Turbo Boost
+        snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo", target_mode->turbo_boost);
+        result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ Turbo Boost: %s\033[0m\n", target_mode->turbo_boost ? "OFF" : "ON");
+            free(result);
+        } else {
+            printf("   ⚠️  Turbo Boost: Error al aplicar\033[0m\n");
+        }
+        
+        // Persistence Mode
+        snprintf(cmd, sizeof(cmd), "sudo nvidia-smi -pm %d", target_mode->persist_mode);
+        result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ Persistence Mode: %s\033[0m\n", target_mode->persist_mode ? "ON" : "OFF");
+            free(result);
+        } else {
+            printf("   ⚠️  Persistence Mode: Error al aplicar\033[0m\n");
+        }
+        
+        // Battery Conservation
+        snprintf(cmd, sizeof(cmd), "sudo legion_cli --donotexpecthwmon batteryconservation-%s", target_mode->battery_conservation ? "enable" : "disable");
+        result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ Battery Conservation: %s\033[0m\n", target_mode->battery_conservation ? "ON" : "OFF");
+            free(result);
+        } else {
+            printf("   ⚠️  Battery Conservation: Error al aplicar\033[0m\n");
+        }
+        
+        // FnLock
+        snprintf(cmd, sizeof(cmd), "sudo legion_cli --donotexpecthwmon fnlock-%s", target_mode->fnlock ? "enable" : "disable");
+        result = execute_system_command(cmd);
+        if (result) {
+            printf("   ✅ FnLock: %s\033[0m\n", target_mode->fnlock ? "ON" : "OFF");
+            free(result);
+        } else {
+            printf("   ⚠️  FnLock: Error al aplicar\033[0m\n");
+        }
+        
+        printf("\033[36m✅ Modo '%s' aplicado exitosamente!\033[0m\n", value);
+        
+        free(modes);
     }
 }
 
