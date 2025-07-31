@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "../include/lexer.h"
 
-// Función auxiliar: agrega un token al array de tokens
+// Función auxiliar: agrega un token al array de token
 void agregar_token(char*** tokens, int* cantidad, const char* valor) {
     *tokens = realloc(*tokens, (*cantidad + 1) * sizeof(char*));
     (*tokens)[*cantidad] = strdup(valor);
@@ -16,7 +16,7 @@ char** lexer_tokenize(const char* linea, int* cantidad) {
     char** tokens = NULL;
     *cantidad = 0;
     
-    char* ptr = copia;
+    char* ptr = copia;o
     while (*ptr) {
         // Saltar espacios y tabs
         while (*ptr == ' ' || *ptr == '\t' || *ptr == '\n') ptr++;
