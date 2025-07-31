@@ -1,0 +1,31 @@
+# Archivos de compilación
+*.o
+*.out
+build/
+*.exe
+
+# Archivos temporales
+*.tmp
+*.temp
+*~
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos de configuración local
+.env
+config.local
+
+# Archivos de backup
+*.bak
+*.backup 
