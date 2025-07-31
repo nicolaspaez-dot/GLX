@@ -1,0 +1,21 @@
+# Ejemplo de archivo GLX - GPU Linux Extension
+# Este archivo demuestra cómo usar GLX para controlar el rendimiento del sistema
+
+# Definir variables
+mi_boost = 1
+mi_perf = 80
+
+# Aplicar configuraciones
+dynamic_boost: mi_boost
+cpu_max_perf: mi_perf
+cpu_min_perf: 40
+turbo_boost: 0
+persist_mode: 1
+battery_conservation: 0
+fnlock: 1
+
+# Mostrar estado
+status
+
+# Saludar
+hola 

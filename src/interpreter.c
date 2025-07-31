@@ -297,7 +297,7 @@ void interpret_declaration(ASTNode* node) {
                         value_type = NODE_NUMBER;
                     } else {
                         printf("\033[33m⚠️  Error: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
-                        return;
+                    return;
                     }
                 } else {
                     printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
@@ -326,8 +326,8 @@ void interpret_declaration(ASTNode* node) {
                         value_type = NODE_NUMBER;
                     } else {
                         printf("\033[33m⚠️  Error: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
-                        return;
-                    }
+                    return;
+                }
                 } else {
                     printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
                     exit(1);
@@ -429,9 +429,9 @@ void interpret_string(ASTNode* node) {
     printf("📄 String: %s\n", node->value);
 }
 
-// Interpretar un comando GPU
+// Interpretar un comando del sistema
 void interpret_gpu_command(ASTNode* node) {
-    // Fuzzy match para comandos GPU
+// Fuzzy match para comandos del sistema
     int es_valido = 0;
     const char* comando_a_ejecutar = node->value;
     
@@ -448,7 +448,7 @@ void interpret_gpu_command(ASTNode* node) {
             printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
             comando_a_ejecutar = sugerido; // Usar el comando sugerido
         } else {
-            printf("Comando GPU desconocido: %s\n", node->value);
+            printf("Comando del sistema desconocido: %s\n", node->value);
             return;
         }
     }
@@ -498,7 +498,7 @@ void interpret_gpu_command(ASTNode* node) {
     }
     else if (strcmp(comando_a_ejecutar, "help") == 0) {
         printf("\033[36m📚 Comandos disponibles:\n");
-        printf("   status - Mostrar estado de la GPU\n");
+        printf("   status - Mostrar estado del sistema\n");
         printf("   reset - Resetear a valores por defecto\n");
         printf("   vars - Mostrar variables definidas\n");
         printf("   run mode: [quiet/balanced/performance] - Aplicar modo\n");
