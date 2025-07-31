@@ -1,20 +1,29 @@
-# Prueba de todos los parámetros del modelo
+# Prueba de todos los parámetros del modelo (actualizado con parámetros reales)
 mode: quiet
-- power_limit: 80
-- fan_speed: 30
-- clocks: 100
-- persist: on
+- dynamic_boost: 0
+- cpu_max_perf: 60
+- cpu_min_perf: 20
+- turbo_boost: 1
+- persist_mode: 1
+- battery_conservation: 1
+- fnlock: 0
 
 mode: balanced
-- power_limit: 100
-- fan_speed: 50
-- clocks: 500
-- persist: off
+- dynamic_boost: 1
+- cpu_max_perf: 80
+- cpu_min_perf: 40
+- turbo_boost: 0
+- persist_mode: 1
+- battery_conservation: 0
+- fnlock: 1
 
 mode: performance
-- power_limit: 130
-- fan_speed: 80
-- clocks: 1800
-- persist: on
+- dynamic_boost: 1
+- cpu_max_perf: 100
+- cpu_min_perf: 60
+- turbo_boost: 0
+- persist_mode: 1
+- battery_conservation: 0
+- fnlock: 1
 
 status 

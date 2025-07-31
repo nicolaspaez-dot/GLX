@@ -6,8 +6,6 @@
 #include "utils.h"
 
 // Variables globales para simular el estado de la GPU
-static int gpu_power_limit = 100;
-static int gpu_fan_speed = 50;
 static char gpu_mode[50] = "normal";
 
 // Sistema de variables
@@ -163,7 +161,7 @@ void interpret_declaration(ASTNode* node) {
             if (!es_valido) {
                 const char* sugerido = sugerir_palabra(value, modos_validos, num_modos, 2);
                 if (sugerido) {
-                    printf("¿Quisiste decir: %s?\n", sugerido);
+                    printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
                 } else {
                     printf("Modo desconocido: %s\n", value);
                 }
@@ -173,13 +171,8 @@ void interpret_declaration(ASTNode* node) {
             gpu_mode[sizeof(gpu_mode) - 1] = '\0'; // Asegurar null-terminator
             printf("\033[36m✅ Modo GPU cambiado a: %s\033[0m\n", gpu_mode);
         }
-        else if (strcmp(node->value, "power_limit") == 0 || strcmp(node->value, "power_limi") == 0) {
-            // Fuzzy match para power_limit
-            if (strcmp(node->value, "power_limi") == 0) {
-                printf("¿Quisiste decir: power_limit?\n");
-            }
-            
-            // Para power_limit, verificar si es número o variable numérica
+        else if (strcmp(node->value, "dynamic_boost") == 0) {
+            // Para dynamic_boost, verificar si es número o variable numérica
             if (value_type == NODE_IDENTIFIER) {
                 const char* var_value = get_variable_value(value);
                 if (var_value) {
@@ -187,7 +180,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'power_limit' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33m⚠️  Error: 'dynamic_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -198,23 +191,17 @@ void interpret_declaration(ASTNode* node) {
             
             if (value_type == NODE_NUMBER) {
                 int val = atoi(value);
-                if (val < 0 || val > 150) {
-                    printf("\033[31m⛔ Error crítico: 'power_limit' fuera de rango (0-150). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                if (val < 0 || val > 1) {
+                    printf("\033[31m⛔ Error crítico: 'dynamic_boost' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                gpu_power_limit = val;
-                printf("\033[36m✅ Límite de potencia GPU establecido a: %d%%\033[0m\n", gpu_power_limit);
+                printf("\033[36m✅ Dynamic Boost establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'power_limit' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33m⚠️  Error: 'dynamic_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
-        else if (strcmp(node->value, "fan_speed") == 0 || strcmp(node->value, "fan_spped") == 0) {
-            // Fuzzy match para fan_speed
-            if (strcmp(node->value, "fan_spped") == 0) {
-                printf("¿Quisiste decir: fan_speed?\n");
-            }
-            
-            // Para fan_speed, verificar si es número o variable numérica
+        else if (strcmp(node->value, "cpu_max_perf") == 0) {
+            // Para cpu_max_perf, verificar si es número o variable numérica
             if (value_type == NODE_IDENTIFIER) {
                 const char* var_value = get_variable_value(value);
                 if (var_value) {
@@ -222,7 +209,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'fan_speed' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33m⚠️  Error: 'cpu_max_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -234,17 +221,16 @@ void interpret_declaration(ASTNode* node) {
             if (value_type == NODE_NUMBER) {
                 int val = atoi(value);
                 if (val < 0 || val > 100) {
-                    printf("\033[31m⛔ Error crítico: 'fan_speed' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    printf("\033[31m⛔ Error crítico: 'cpu_max_perf' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                gpu_fan_speed = val;
-                printf("\033[36m✅ Velocidad del ventilador GPU establecida a: %d%%\033[0m\n", gpu_fan_speed);
+                printf("\033[36m✅ CPU Max Performance establecido a: %d%%\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'fan_speed' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33m⚠️  Error: 'cpu_max_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
-        else if (strcmp(node->value, "clocks") == 0) {
-            // Para clocks, verificar si es número o variable numérica
+        else if (strcmp(node->value, "cpu_min_perf") == 0) {
+            // Para cpu_min_perf, verificar si es número o variable numérica
             if (value_type == NODE_IDENTIFIER) {
                 const char* var_value = get_variable_value(value);
                 if (var_value) {
@@ -252,7 +238,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'clocks' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33m⚠️  Error: 'cpu_min_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -263,52 +249,139 @@ void interpret_declaration(ASTNode* node) {
             
             if (value_type == NODE_NUMBER) {
                 int val = atoi(value);
-                if (val < 0 || val > 3000) {
-                    printf("\033[31m⛔ Error crítico: 'clocks' fuera de rango (0-3000). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                if (val < 0 || val > 100) {
+                    printf("\033[31m⛔ Error crítico: 'cpu_min_perf' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ Frecuencia de reloj GPU establecida a: %d MHz\033[0m\n", val);
+                printf("\033[36m✅ CPU Min Performance establecido a: %d%%\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'clocks' debe ser un número, no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33m⚠️  Error: 'cpu_min_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
-        else if (strcmp(node->value, "persist") == 0) {
-            // Para persist mode, verificar si es string o variable
+        else if (strcmp(node->value, "turbo_boost") == 0) {
+            // Para turbo_boost, verificar si es número o variable numérica
             if (value_type == NODE_IDENTIFIER) {
-                // Verificar si es un valor válido directamente
-                if (strcmp(value, "on") == 0) {
-                    printf("\033[36m✅ Modo persistente GPU activado\033[0m\n");
-                    return;
-                } else if (strcmp(value, "off") == 0) {
-                    printf("\033[36m✅ Modo persistente GPU desactivado\033[0m\n");
-                    return;
-                }
-                
-                // Si no es on/off, buscar como variable
                 const char* var_value = get_variable_value(value);
                 if (var_value) {
                     value = (char*)var_value;
+                    if (is_variable_number(node->children[0]->value)) {
+                        value_type = NODE_NUMBER;
+                    } else {
+                        printf("\033[33m⚠️  Error: 'turbo_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        return;
+                    }
                 } else {
                     printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
                     exit(1);
                 }
             }
             
-            if (strcmp(value, "on") == 0) {
-                printf("\033[36m✅ Modo persistente GPU activado\033[0m\n");
-            } else if (strcmp(value, "off") == 0) {
-                printf("\033[36m✅ Modo persistente GPU desactivado\033[0m\n");
+            if (value_type == NODE_NUMBER) {
+                int val = atoi(value);
+                if (val < 0 || val > 1) {
+                    printf("\033[31m⛔ Error crítico: 'turbo_boost' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    exit(1);
+                }
+                printf("\033[36m✅ Turbo Boost establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'persist mode' debe ser 'on' o 'off', no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33m⚠️  Error: 'turbo_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+            }
+        }
+        else if (strcmp(node->value, "persist_mode") == 0) {
+            // Para persist_mode, verificar si es número o variable numérica
+            if (value_type == NODE_IDENTIFIER) {
+                const char* var_value = get_variable_value(value);
+                if (var_value) {
+                    value = (char*)var_value;
+                    if (is_variable_number(node->children[0]->value)) {
+                        value_type = NODE_NUMBER;
+                    } else {
+                        printf("\033[33m⚠️  Error: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        return;
+                    }
+                } else {
+                    printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
+                    exit(1);
+                }
+            }
+            
+            if (value_type == NODE_NUMBER) {
+                int val = atoi(value);
+                if (val < 0 || val > 1) {
+                    printf("\033[31m⛔ Error crítico: 'persist_mode' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    exit(1);
+                }
+                printf("\033[36m✅ Persistence Mode establecido a: %d\033[0m\n", val);
+            } else {
+                printf("\033[33m⚠️  Error: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+            }
+        }
+        else if (strcmp(node->value, "battery_conservation") == 0) {
+            // Para battery_conservation, verificar si es número o variable numérica
+            if (value_type == NODE_IDENTIFIER) {
+                const char* var_value = get_variable_value(value);
+                if (var_value) {
+                    value = (char*)var_value;
+                    if (is_variable_number(node->children[0]->value)) {
+                        value_type = NODE_NUMBER;
+                    } else {
+                        printf("\033[33m⚠️  Error: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        return;
+                    }
+                } else {
+                    printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
+                    exit(1);
+                }
+            }
+            
+            if (value_type == NODE_NUMBER) {
+                int val = atoi(value);
+                if (val < 0 || val > 1) {
+                    printf("\033[31m⛔ Error crítico: 'battery_conservation' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    exit(1);
+                }
+                printf("\033[36m✅ Battery Conservation establecido a: %d\033[0m\n", val);
+            } else {
+                printf("\033[33m⚠️  Error: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+            }
+        }
+        else if (strcmp(node->value, "fnlock") == 0) {
+            // Para fnlock, verificar si es número o variable numérica
+            if (value_type == NODE_IDENTIFIER) {
+                const char* var_value = get_variable_value(value);
+                if (var_value) {
+                    value = (char*)var_value;
+                    if (is_variable_number(node->children[0]->value)) {
+                        value_type = NODE_NUMBER;
+                    } else {
+                        printf("\033[33m⚠️  Error: 'fnlock' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        return;
+                    }
+                } else {
+                    printf("\033[31m⛔ Error crítico: La variable '%s' no está definida. Ejecución abortada.\033[0m\n", value);
+                    exit(1);
+                }
+            }
+            
+            if (value_type == NODE_NUMBER) {
+                int val = atoi(value);
+                if (val < 0 || val > 1) {
+                    printf("\033[31m⛔ Error crítico: 'fnlock' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
+                    exit(1);
+                }
+                printf("\033[36m✅ FnLock establecido a: %d\033[0m\n", val);
+            } else {
+                printf("\033[33m⚠️  Error: 'fnlock' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else {
-            // Fuzzy match para parámetros desconocidos
+            // Parámetro desconocido, usar fuzzy match
             const char* sugerido = sugerir_palabra(node->value, parametros_validos, num_parametros, 2);
             if (sugerido) {
-                printf("¿Quisiste decir: %s?\n", sugerido);
+                printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
             } else {
-                printf("Parámetro desconocido: %s\n", node->value);
+                printf("\033[31m⛔ Error crítico: Parámetro desconocido: %s. Ejecución abortada.\033[0m\n", node->value);
+                exit(1);
             }
         }
     }
@@ -372,7 +445,7 @@ void interpret_gpu_command(ASTNode* node) {
     if (!es_valido) {
         const char* sugerido = sugerir_palabra(node->value, comandos_gpu_validos, num_comandos_gpu, 2);
         if (sugerido) {
-            printf("¿Quisiste decir: %s?\n", sugerido);
+            printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
             comando_a_ejecutar = sugerido; // Usar el comando sugerido
         } else {
             printf("Comando GPU desconocido: %s\n", node->value);
@@ -383,15 +456,18 @@ void interpret_gpu_command(ASTNode* node) {
     // Ejecutar el comando (original o sugerido)
     if (strcmp(comando_a_ejecutar, "status") == 0) {
         printf("\033[36m📊 Estado actual de la GPU:\n");
-        printf("   Modo: %s\n", gpu_mode);
-        printf("   Límite de potencia: %d%%\n", gpu_power_limit);
-        printf("   Velocidad del ventilador: %d%%\033[0m\n", gpu_fan_speed);
+        
+        // Ejecutar nvidia-smi para obtener información real
+        char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,fan.speed,temperature.gpu,clocks.current.graphics,power.limit --format=csv,noheader,nounits");
+        
+        if (gpu_info) {
+            printf("   %s\033[0m\n", gpu_info);
+            free(gpu_info);
+        } else {
+            printf("   Error: No se pudo obtener información de la GPU\033[0m\n");
+        }
     }
     else if (strcmp(comando_a_ejecutar, "reset") == 0) {
-        gpu_power_limit = 100;
-        gpu_fan_speed = 50;
-        strncpy(gpu_mode, "normal", sizeof(gpu_mode) - 1);
-        gpu_mode[sizeof(gpu_mode) - 1] = '\0'; // Asegurar null-terminator
         printf("\033[36m🔄 GPU reseteada a configuración por defecto\033[0m\n");
     }
     else if (strcmp(comando_a_ejecutar, "-") == 0) {
@@ -425,9 +501,14 @@ void interpret_gpu_command(ASTNode* node) {
         printf("   status - Mostrar estado de la GPU\n");
         printf("   reset - Resetear a valores por defecto\n");
         printf("   vars - Mostrar variables definidas\n");
-        printf("   mode: [quiet/balanced/performance] - Cambiar modo\n");
-        printf("   power_limit: [número] - Establecer límite de potencia\n");
-        printf("   fan_speed: [número] - Establecer velocidad del ventilador\n");
+        printf("   run mode: [quiet/balanced/performance] - Aplicar modo\n");
+        printf("   dynamic_boost: [0/1] - Activar/desactivar Dynamic Boost\n");
+        printf("   cpu_max_perf: [0-100] - Rendimiento máximo de CPU\n");
+        printf("   cpu_min_perf: [0-100] - Rendimiento mínimo de CPU\n");
+        printf("   turbo_boost: [0/1] - Activar/desactivar Turbo Boost\n");
+        printf("   persist_mode: [0/1] - Activar/desactivar Persistence Mode\n");
+        printf("   battery_conservation: [0/1] - Activar/desactivar conservación de batería\n");
+        printf("   fnlock: [0/1] - Activar/desactivar FnLock\n");
         printf("   variable = valor - Definir una variable\033[0m\n");
     }
 }
@@ -444,7 +525,7 @@ void manejar_identificador_desconocido(const char* palabra, int tipo) {
         sugerido = sugerir_palabra(palabra, comandos_gpu_validos, num_comandos_gpu, 2);
     }
     if (sugerido) {
-        printf("¿Quisiste decir: %s?\n", sugerido); // Sugerencia simple
+        printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido); // Sugerencia en amarillo
     } else {
         printf("Identificador desconocido: %s\n", palabra);
     }

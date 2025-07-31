@@ -4,6 +4,7 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 #include "../include/interpreter.h"
+#include "../include/utils.h"
 
 // Función auxiliar para imprimir el AST
 void print_ast(ASTNode* node, int depth) {
@@ -51,11 +52,14 @@ int main(int argc, char* argv[]) {
         printf("  reset                   - Resetear GPU a valores por defecto\n");
         printf("  vars                    - Mostrar variables definidas\n\n");
         printf("Parámetros de GPU:\n");
-        printf("  mode: [quiet/balanced/performance] - Cambiar modo\n");
-        printf("  power_limit: [0-150]    - Establecer límite de potencia\n");
-        printf("  fan_speed: [0-100]      - Establecer velocidad del ventilador\n");
-        printf("  clocks: [0-3000]        - Establecer frecuencia de reloj\n");
-        printf("  persist: [on/off]       - Activar/desactivar modo persistente\n\n");
+        printf("  run mode: [quiet/balanced/performance] - Aplicar modo\n");
+        printf("  dynamic_boost: [0/1]    - Activar/desactivar Dynamic Boost\n");
+        printf("  cpu_max_perf: [0-100]   - Rendimiento máximo de CPU\n");
+        printf("  cpu_min_perf: [0-100]   - Rendimiento mínimo de CPU\n");
+        printf("  turbo_boost: [0/1]      - Activar/desactivar Turbo Boost\n");
+        printf("  persist_mode: [0/1]     - Activar/desactivar Persistence Mode\n");
+        printf("  battery_conservation: [0/1] - Activar/desactivar conservación de batería\n");
+        printf("  fnlock: [0/1]           - Activar/desactivar FnLock\n\n");
         printf("Variables:\n");
         printf("  variable = valor        - Definir una variable\n\n");
         printf("Ejemplos:\n");
@@ -68,9 +72,17 @@ int main(int argc, char* argv[]) {
     // Verificar si se pasó el comando status
     if (argc > 1 && strcmp(argv[1], "status") == 0) {
         printf("\033[36m📊 Estado actual de la GPU:\n");
-        printf("   Modo: normal\n");
-        printf("   Límite de potencia: 100%%\n");
-        printf("   Velocidad del ventilador: 50%%\033[0m\n");
+        
+        // Ejecutar nvidia-smi para obtener información real
+        char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,fan.speed,temperature.gpu,clocks.current.graphics,power.limit --format=csv,noheader,nounits");
+        
+        if (gpu_info) {
+            printf("   %s\033[0m\n", gpu_info);
+            free(gpu_info);
+        } else {
+            printf("   Error: No se pudo obtener información de la GPU\033[0m\n");
+        }
+        
         return 0;
     }
     

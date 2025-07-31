@@ -1,22 +1,22 @@
 # Este es un comentario al inicio de la línea
 mode: quiet # Comentario al final de la línea
-- power_limit: 80 # Otro comentario
-- fan_speed: 30
-- clocks: 100 # Comentario explicativo
-- persist: on
+- dynamic_boost: 0 # Otro comentario
+- cpu_max_perf: 60
+- cpu_min_perf: 20 # Comentario explicativo
+- persist_mode: 1
 
 # Configuración para modo balanceado
 mode: balanced
-- power_limit: 100
-- fan_speed: 50 # Velocidad del ventilador
-- clocks: 500
-- persist: off
+- dynamic_boost: 1
+- cpu_max_perf: 80 # Rendimiento máximo
+- cpu_min_perf: 40
+- persist_mode: 1
 
 # Configuración de alto rendimiento
 mode: performance
-- power_limit: 130
-- fan_speed: 80
-- clocks: 1800 # Frecuencia máxima
-- persist: on
+- dynamic_boost: 1
+- cpu_max_perf: 100
+- cpu_min_perf: 60 # Rendimiento mínimo
+- persist_mode: 1
 
 status # Mostrar estado final 

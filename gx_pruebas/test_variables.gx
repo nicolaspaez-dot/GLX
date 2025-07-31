@@ -1,9 +1,9 @@
 # TEST: Uso de variables y su aplicación en comandos para asignar
 # Prueba de variables y su uso
 a = 10
-b = 20
+b = 1
 c = 30
-power_limit: a
-fan_speed: b
+cpu_max_perf: a
+dynamic_boost: b
 modo: quiet
-status  Value: 10
+status

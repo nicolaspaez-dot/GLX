@@ -1,5 +1,5 @@
-# TEST: Valores fuera de rango para parámetros
+# TEST: Valores fuera de rango para parámetros (actualizado con parámetros reales)
 # Prueba de valores fuera de rango
-power_limit: 150
-fan_speed: -10
+cpu_max_perf: 100
+dynamic_boost: -1
 status 

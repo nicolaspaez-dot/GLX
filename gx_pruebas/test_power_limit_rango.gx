@@ -1,17 +1,17 @@
-# TEST: Verificación del rango de power_limit
-# power_limit debe aceptar valores de 0 a 150 (inclusive)
+# TEST: Verificación del rango de cpu_max_perf
+# cpu_max_perf debe aceptar valores de 0 a 100 (inclusive)
 
 # Caso 1: Valor mínimo válido
-power_limit: 0
+cpu_max_perf: 0
 
 # Caso 2: Valor máximo válido
-power_limit: 150
+cpu_max_perf: 100
 
 # Caso 3: Valor fuera de rango (debería dar error)
-power_limit: 151
+cpu_max_perf: 101
 
 # Caso 4: Valor negativo (debería dar error)
-power_limit: -10
+cpu_max_perf: -10
 
 # Caso 5: Valor dentro del rango
-power_limit: 75 
+cpu_max_perf: 75 
