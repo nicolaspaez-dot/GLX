@@ -72,38 +72,44 @@ int main(int argc, char* argv[]) {
     
     // Verificar si se pasó el comando status
     if (argc > 1 && strcmp(argv[1], "status") == 0) {
-        printf("\033[36m📊 Estado actual del sistema:\033[0m\n");
+        printf("\033[36mEstado actual del sistema:\033[0m\n");
         
-        // Información de GPU
-        char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,fan.speed,temperature.gpu,clocks.current.graphics,power.limit --format=csv,noheader,nounits");
-        
+        // Obtener información de GPU
+        char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,temperature.gpu,clocks.current.graphics --format=csv,noheader,nounits 2>/dev/null");
         if (gpu_info) {
-            printf("   🎮 GPU: %s\033[0m\n", gpu_info);
+            printf("   GPU: %s", gpu_info);
             free(gpu_info);
         } else {
-            printf("   ⚠️  GPU: No se pudo obtener información\033[0m\n");
+            printf("   Advertencia: GPU: No se pudo obtener información\033[0m\n");
         }
         
-        // Información de CPU y sistema
-        char* cpu_max = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/max_perf_pct");
-        char* cpu_min = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/min_perf_pct");
-        char* dynamic_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost");
-        char* turbo_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/no_turbo");
-        char* battery_status = execute_system_command("cat /sys/class/power_supply/ACAD/online");
+        // Obtener información de CPU
+        char* cpu_info = execute_system_command("cat /proc/cpuinfo | grep 'model name' | head -1 | cut -d':' -f2 | sed 's/^[ \t]*//'");
+        if (cpu_info) {
+            printf("   CPU: %s", cpu_info);
+            free(cpu_info);
+        }
+        
+        // Obtener información de memoria
+        char* mem_info = execute_system_command("free -h | grep '^Mem:' | awk '{print \"Memoria: \" $2 \" total, \" $3 \" usado, \" $4 \" libre\"}'");
+        if (mem_info) {
+            printf("   %s", mem_info);
+            free(mem_info);
+        }
+        
+        // Obtener información de parámetros del sistema
+        char* cpu_max = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/max_perf_pct 2>/dev/null");
+        char* cpu_min = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/min_perf_pct 2>/dev/null");
+        char* dynamic_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost 2>/dev/null");
+        char* turbo_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null");
+        char* battery_status = execute_system_command("cat /sys/class/power_supply/AC/online 2>/dev/null");
         
         if (cpu_max && cpu_min && dynamic_boost && turbo_boost && battery_status) {
-            // Eliminar saltos de línea
-            cpu_max[strcspn(cpu_max, "\n")] = 0;
-            cpu_min[strcspn(cpu_min, "\n")] = 0;
-            dynamic_boost[strcspn(dynamic_boost, "\n")] = 0;
-            turbo_boost[strcspn(turbo_boost, "\n")] = 0;
-            battery_status[strcspn(battery_status, "\n")] = 0;
-            
-            printf("   🖥️  CPU Max Performance: %s%%\n", cpu_max);
-            printf("   🖥️  CPU Min Performance: %s%%\n", cpu_min);
-            printf("   ⚡ Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
-            printf("   🚀 Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
-            printf("   🔋 Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
+            printf("   CPU Max Performance: %s%%\n", cpu_max);
+            printf("   CPU Min Performance: %s%%\n", cpu_min);
+            printf("   Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
+            printf("   Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
+            printf("   Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
             
             free(cpu_max);
             free(cpu_min);
@@ -111,7 +117,7 @@ int main(int argc, char* argv[]) {
             free(turbo_boost);
             free(battery_status);
         } else {
-            printf("   ⚠️  CPU/Sistema: No se pudo obtener información completa\033[0m\n");
+            printf("   Advertencia: CPU/Sistema: No se pudo obtener información completa\033[0m\n");
             if (cpu_max) free(cpu_max);
             if (cpu_min) free(cpu_min);
             if (dynamic_boost) free(dynamic_boost);
@@ -204,7 +210,7 @@ int main(int argc, char* argv[]) {
         print_ast(ast, 0);
 
         // Fase 3: Interpreter
-        printf("\n🎯 Ejecutando comando:\n");
+        printf("\nEjecutando comando:\n");
         interpret_ast(ast);
 
         // Limpieza

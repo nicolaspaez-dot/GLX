@@ -1,75 +1,69 @@
 #!/bin/bash
 
-# Script de instalación para GLX
-# Hace que GLX esté disponible globalmente como comando
-
-echo "🚀 Instalando GLX - GPU Linux Extension..."
+echo "Instalando GLX - GPU Linux Extension..."
 
 # Verificar si estamos en el directorio correcto
 if [ ! -f "src/main.c" ]; then
-    echo "❌ Error: Debes ejecutar este script desde el directorio raíz de GLX/"
+    echo "Error: No se encontró src/main.c"
+    echo "Asegúrate de estar en el directorio raíz del proyecto GLX"
     exit 1
 fi
 
+# Verificar si modelo.txt existe
+if [ ! -f "modelo.txt" ]; then
+    echo "Error: No se encontró modelo.txt"
+    echo "Asegúrate de que modelo.txt esté en el directorio raíz"
+    exit 1
+fi
+
+# Crear directorio build si no existe
+mkdir -p build
+
 # Compilar el proyecto
-echo "📦 Compilando GLX..."
+echo "Compilando GLX..."
 make clean
 make
 
 if [ $? -ne 0 ]; then
-    echo "❌ Error: La compilación falló"
+    echo "Error: La compilación falló"
     exit 1
 fi
 
-# Verificar que el ejecutable existe
+# Verificar que el ejecutable se creó
 if [ ! -f "build/gx" ]; then
-    echo "❌ Error: No se encontró el ejecutable build/gx"
+    echo "Error: No se pudo crear el ejecutable build/gx"
     exit 1
 fi
 
-# Verificar que modelo.txt existe
-if [ ! -f "modelo.txt" ]; then
-    echo "❌ Error: No se encontró el archivo modelo.txt"
-    exit 1
-fi
-
-# Crear directorio de instalación si no existe
-echo "📁 Creando directorio de instalación..."
-sudo mkdir -p /usr/local/bin
+# Crear directorio para archivos de configuración
 sudo mkdir -p /usr/local/share/glx
 
-# Copiar el ejecutable
-echo "📋 Copiando GLX a /usr/local/bin/gx..."
+# Copiar el ejecutable a /usr/local/bin
+echo "Instalando ejecutable en /usr/local/bin/gx..."
 sudo cp build/gx /usr/local/bin/gx
 
-# Copiar modelo.txt
-echo "📋 Copiando modelo.txt a /usr/local/share/glx/modelo.txt..."
+# Copiar modelo.txt a /usr/local/share/glx
+echo "Instalando configuración en /usr/local/share/glx/modelo.txt..."
 sudo cp modelo.txt /usr/local/share/glx/modelo.txt
 
 # Dar permisos de ejecución
-echo "🔐 Configurando permisos..."
 sudo chmod +x /usr/local/bin/gx
-sudo chmod 644 /usr/local/share/glx/modelo.txt
 
-# Verificar la instalación
-echo "✅ Verificando instalación..."
+echo "Verificando instalación..."
+
+# Verificar que se puede ejecutar desde cualquier lugar
 if command -v gx >/dev/null 2>&1; then
-    echo "🎉 ¡GLX instalado exitosamente!"
+    echo "GLX instalado exitosamente!"
     echo ""
-    echo "📋 Comandos disponibles:"
-    echo "   gx help                    - Mostrar ayuda"
-    echo "   gx status                  - Estado del sistema"
-    echo "   gx vars                    - Variables definidas"
-    echo "   gx run mode:quiet          - Aplicar modo quiet"
-    echo "   gx run mode:balanced       - Aplicar modo balanced"
-    echo "   gx run mode:performance    - Aplicar modo performance"
-    echo "   gx archivo.gx              - Ejecutar archivo GLX"
+    echo "Uso:"
+    echo "  gx status                    - Ver estado del sistema"
+    echo "  gx run mode:quiet           - Aplicar modo silencioso"
+    echo "  gx run mode:balanced        - Aplicar modo equilibrado"
+    echo "  gx run mode:performance     - Aplicar modo rendimiento"
+    echo "  gx help                     - Ver ayuda"
     echo ""
-    echo "🌍 Ahora puedes usar GLX desde cualquier directorio!"
-    echo "📁 Archivos instalados:"
-    echo "   /usr/local/bin/gx"
-    echo "   /usr/local/share/glx/modelo.txt"
+    echo "Ejemplo: gx run mode:quiet"
 else
-    echo "❌ Error: La instalación no se completó correctamente"
+    echo "Error: La instalación no se completó correctamente"
     exit 1
 fi 

@@ -143,7 +143,7 @@ GPU_Mode* load_gpu_modes(const char* filename, int* num_modes) {
             current_mode->name[sizeof(current_mode->name) - 1] = '\0';
             
             (*num_modes)++;
-            printf("📋 Modo encontrado: %s\n", current_mode->name);
+            printf("Modo encontrado: %s\n", current_mode->name);
         }
         // Buscar configuraciones: "- parametro: valor"
         else if (current_mode && line[0] == '-' && strstr(line, ":")) {
@@ -190,6 +190,6 @@ GPU_Mode* load_gpu_modes(const char* filename, int* num_modes) {
     }
     
     fclose(file);
-    printf("✅ Cargados %d modos desde %s\n", *num_modes, filename);
+    printf("Cargados %d modos desde %s\n", *num_modes, filename);
     return modes;
 }

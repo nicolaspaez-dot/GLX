@@ -1,30 +1,27 @@
 #!/bin/bash
 
-# Script de desinstalación para GLX
-
-echo "🗑️  Desinstalando GLX - GPU Linux Extension..."
+echo "Desinstalando GLX - GPU Linux Extension..."
 
 # Verificar si GLX está instalado
 if [ ! -f "/usr/local/bin/gx" ]; then
-    echo "❌ GLX no está instalado en el sistema"
-    exit 1
+    echo "GLX no está instalado en /usr/local/bin/gx"
+    exit 0
 fi
 
-# Eliminar el ejecutable
-echo "📋 Eliminando /usr/local/bin/gx..."
+# Remover el ejecutable
+echo "Removiendo ejecutable..."
 sudo rm -f /usr/local/bin/gx
 
-# Eliminar modelo.txt
-echo "📋 Eliminando /usr/local/share/glx/modelo.txt..."
-sudo rm -f /usr/local/share/glx/modelo.txt
+# Remover archivos de configuración
+echo "Removiendo archivos de configuración..."
+sudo rm -rf /usr/local/share/glx
 
-# Eliminar directorio si está vacío
-if [ -d "/usr/local/share/glx" ]; then
-    sudo rmdir /usr/local/share/glx 2>/dev/null || echo "📁 Directorio /usr/local/share/glx no está vacío, se mantiene"
-fi
-
-echo "✅ GLX desinstalado exitosamente!"
-echo ""
-echo "📋 Archivos eliminados:"
-echo "   /usr/local/bin/gx"
-echo "   /usr/local/share/glx/modelo.txt" 
+# Verificar que se removió completamente
+if [ ! -f "/usr/local/bin/gx" ] && [ ! -d "/usr/local/share/glx" ]; then
+    echo "GLX desinstalado exitosamente!"
+else
+    echo "Advertencia: Algunos archivos podrían no haberse removido completamente"
+    echo "Verifica manualmente:"
+    echo "  /usr/local/bin/gx"
+    echo "  /usr/local/share/glx/"
+fi 

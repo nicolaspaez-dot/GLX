@@ -138,7 +138,7 @@ void interpret_ast(ASTNode* node) {
 
 // Interpretar un programa (nodo raíz)
 void interpret_program(ASTNode* node) {
-    printf("🚀 Ejecutando programa...\n");
+    printf("Ejecutando programa...\n");
     
     // Ejecutar todos los hijos del programa
     for (int i = 0; i < node->num_children; i++) {
@@ -165,7 +165,7 @@ void interpret_declaration(ASTNode* node) {
             if (!es_valido) {
                 const char* sugerido = sugerir_palabra(value, modos_validos, num_modos, 2);
                 if (sugerido) {
-                    printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
+                    printf("\033[33mSugerencia: ¿Quisiste decir: %s?\033[0m\n", sugerido);
                 } else {
                     printf("Modo desconocido: %s\n", value);
                 }
@@ -173,7 +173,7 @@ void interpret_declaration(ASTNode* node) {
             }
             strncpy(gpu_mode, value, sizeof(gpu_mode) - 1);
             gpu_mode[sizeof(gpu_mode) - 1] = '\0'; // Asegurar null-terminator
-            printf("\033[36m✅ Modo GPU cambiado a: %s\033[0m\n", gpu_mode);
+            printf("\033[36mModo GPU cambiado a: %s\033[0m\n", gpu_mode);
         }
         else if (strcmp(node->value, "dynamic_boost") == 0) {
             // Para dynamic_boost, verificar si es número o variable numérica
@@ -184,7 +184,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'dynamic_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'dynamic_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -199,9 +199,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'dynamic_boost' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ Dynamic Boost establecido a: %d\033[0m\n", val);
+                printf("\033[36mDynamic Boost establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'dynamic_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'dynamic_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "cpu_max_perf") == 0) {
@@ -213,7 +213,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'cpu_max_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'cpu_max_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -228,9 +228,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'cpu_max_perf' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ CPU Max Performance establecido a: %d%%\033[0m\n", val);
+                printf("\033[36mCPU Max Performance establecido a: %d%%\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'cpu_max_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'cpu_max_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "cpu_min_perf") == 0) {
@@ -242,7 +242,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'cpu_min_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'cpu_min_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -257,9 +257,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'cpu_min_perf' fuera de rango (0-100). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ CPU Min Performance establecido a: %d%%\033[0m\n", val);
+                printf("\033[36mCPU Min Performance establecido a: %d%%\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'cpu_min_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'cpu_min_perf' debe ser un número (0-100), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "turbo_boost") == 0) {
@@ -271,7 +271,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'turbo_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'turbo_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -286,9 +286,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'turbo_boost' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ Turbo Boost establecido a: %d\033[0m\n", val);
+                printf("\033[36mTurbo Boost establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'turbo_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'turbo_boost' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "persist_mode") == 0) {
@@ -300,7 +300,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                     return;
                     }
                 } else {
@@ -315,9 +315,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'persist_mode' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ Persistence Mode establecido a: %d\033[0m\n", val);
+                printf("\033[36mPersistence Mode establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'persist_mode' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "battery_conservation") == 0) {
@@ -329,7 +329,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                     return;
                 }
                 } else {
@@ -344,9 +344,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'battery_conservation' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ Battery Conservation establecido a: %d\033[0m\n", val);
+                printf("\033[36mBattery Conservation establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'battery_conservation' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else if (strcmp(node->value, "fnlock") == 0) {
@@ -358,7 +358,7 @@ void interpret_declaration(ASTNode* node) {
                     if (is_variable_number(node->children[0]->value)) {
                         value_type = NODE_NUMBER;
                     } else {
-                        printf("\033[33m⚠️  Error: 'fnlock' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                        printf("\033[33mError: 'fnlock' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
                         return;
                     }
                 } else {
@@ -373,9 +373,9 @@ void interpret_declaration(ASTNode* node) {
                     printf("\033[31m⛔ Error crítico: 'fnlock' fuera de rango (0-1). Valor recibido: %d. Ejecución abortada.\033[0m\n", val);
                     exit(1);
                 }
-                printf("\033[36m✅ FnLock establecido a: %d\033[0m\n", val);
+                printf("\033[36mFnLock establecido a: %d\033[0m\n", val);
             } else {
-                printf("\033[33m⚠️  Error: 'fnlock' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
+                printf("\033[33mError: 'fnlock' debe ser un número (0 o 1), no '%s'. Revisa el valor asignado.\033[0m\n", value);
             }
         }
         else {
@@ -420,7 +420,7 @@ void interpret_assignment(ASTNode* node) {
 
 // Interpretar un identificador
 void interpret_identifier(ASTNode* node) {
-    printf("🏷️  Identificador: %s\n", node->value);
+    printf("Identificador: %s\n", node->value);
 }
 
 // Interpretar un número
@@ -449,7 +449,7 @@ void interpret_gpu_command(ASTNode* node) {
     if (!es_valido) {
         const char* sugerido = sugerir_palabra(node->value, comandos_gpu_validos, num_comandos_gpu, 2);
         if (sugerido) {
-            printf("\033[33m💡 ¿Quisiste decir: %s?\033[0m\n", sugerido);
+            printf("\033[33mSugerencia: ¿Quisiste decir: %s?\033[0m\n", sugerido);
             comando_a_ejecutar = sugerido; // Usar el comando sugerido
         } else {
             printf("Comando del sistema desconocido: %s\n", node->value);
@@ -459,38 +459,44 @@ void interpret_gpu_command(ASTNode* node) {
     
     // Ejecutar el comando (original o sugerido)
     if (strcmp(comando_a_ejecutar, "status") == 0) {
-        printf("\033[36m📊 Estado actual del sistema:\033[0m\n");
+        printf("\033[36mEstado actual del sistema:\033[0m\n");
         
-        // Información de GPU
-        char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,fan.speed,temperature.gpu,clocks.current.graphics,power.limit --format=csv,noheader,nounits");
-        
+        // Obtener información de GPU
+        char* gpu_info = execute_system_command("nvidia-smi --query-gpu=name,power.draw,temperature.gpu,clocks.current.graphics --format=csv,noheader,nounits 2>/dev/null");
         if (gpu_info) {
-            printf("   🎮 GPU: %s\033[0m\n", gpu_info);
+            printf("   GPU: %s", gpu_info);
             free(gpu_info);
         } else {
-            printf("   ⚠️  GPU: No se pudo obtener información\033[0m\n");
+            printf("   Advertencia: GPU: No se pudo obtener información\033[0m\n");
         }
         
-        // Información de CPU y sistema
-        char* cpu_max = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/max_perf_pct");
-        char* cpu_min = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/min_perf_pct");
-        char* dynamic_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost");
-        char* turbo_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/no_turbo");
-        char* battery_status = execute_system_command("cat /sys/class/power_supply/ACAD/online");
+        // Obtener información de CPU
+        char* cpu_info = execute_system_command("cat /proc/cpuinfo | grep 'model name' | head -1 | cut -d':' -f2 | sed 's/^[ \t]*//'");
+        if (cpu_info) {
+            printf("   CPU: %s", cpu_info);
+            free(cpu_info);
+        }
+        
+        // Obtener información de memoria
+        char* mem_info = execute_system_command("free -h | grep '^Mem:' | awk '{print \"Memoria: \" $2 \" total, \" $3 \" usado, \" $4 \" libre\"}'");
+        if (mem_info) {
+            printf("   %s", mem_info);
+            free(mem_info);
+        }
+        
+        // Obtener información de parámetros del sistema
+        char* cpu_max = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/max_perf_pct 2>/dev/null");
+        char* cpu_min = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/min_perf_pct 2>/dev/null");
+        char* dynamic_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost 2>/dev/null");
+        char* turbo_boost = execute_system_command("cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null");
+        char* battery_status = execute_system_command("cat /sys/class/power_supply/AC/online 2>/dev/null");
         
         if (cpu_max && cpu_min && dynamic_boost && turbo_boost && battery_status) {
-            // Eliminar saltos de línea
-            cpu_max[strcspn(cpu_max, "\n")] = 0;
-            cpu_min[strcspn(cpu_min, "\n")] = 0;
-            dynamic_boost[strcspn(dynamic_boost, "\n")] = 0;
-            turbo_boost[strcspn(turbo_boost, "\n")] = 0;
-            battery_status[strcspn(battery_status, "\n")] = 0;
-            
-            printf("   🖥️  CPU Max Performance: %s%%\n", cpu_max);
-            printf("   🖥️  CPU Min Performance: %s%%\n", cpu_min);
-            printf("   ⚡ Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
-            printf("   🚀 Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
-            printf("   🔋 Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
+            printf("   CPU Max Performance: %s%%\n", cpu_max);
+            printf("   CPU Min Performance: %s%%\n", cpu_min);
+            printf("   Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
+            printf("   Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
+            printf("   Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
             
             free(cpu_max);
             free(cpu_min);
@@ -498,7 +504,7 @@ void interpret_gpu_command(ASTNode* node) {
             free(turbo_boost);
             free(battery_status);
         } else {
-            printf("   ⚠️  CPU/Sistema: No se pudo obtener información completa\033[0m\n");
+            printf("   Advertencia: CPU/Sistema: No se pudo obtener información completa\033[0m\n");
             if (cpu_max) free(cpu_max);
             if (cpu_min) free(cpu_min);
             if (dynamic_boost) free(dynamic_boost);
@@ -596,7 +602,7 @@ void interpret_run_command(ASTNode* node) {
                     }
                 }
                 if (sugerido_valido) {
-                    printf("\033[36m✅ Aplicando modo sugerido: %s\033[0m\n", sugerido);
+                    printf("\033[36mAplicando modo sugerido: %s\033[0m\n", sugerido);
                     value = (char*)sugerido;
                 } else {
                     printf("Modo de ejecución desconocido: %s\n", value);
@@ -609,7 +615,7 @@ void interpret_run_command(ASTNode* node) {
         }
 
         // Cargar configuraciones desde modelo.txt
-        printf("\033[36m🔄 Cargando configuración para modo: %s\033[0m\n", value);
+        printf("\033[36mCargando configuración para modo: %s\033[0m\n", value);
         
         int num_modes;
         // Buscar modelo.txt en ubicaciones del sistema
@@ -663,80 +669,80 @@ void interpret_run_command(ASTNode* node) {
         }
         
         // Aplicar configuraciones
-        printf("\033[36m⚙️  Aplicando configuraciones del sistema...\033[0m\n");
+        printf("\033[36mAplicando configuraciones del sistema...\033[0m\n");
         
         // Dynamic Boost
         char cmd[512];
         snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/hwp_dynamic_boost", target_mode->dynamic_boost);
         char* result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ Dynamic Boost: %d\033[0m\n", target_mode->dynamic_boost);
+            printf("   Dynamic Boost: %d\033[0m\n", target_mode->dynamic_boost);
             free(result);
         } else {
-            printf("   ⚠️  Dynamic Boost: Error al aplicar\033[0m\n");
+            printf("   Advertencia: Dynamic Boost: Error al aplicar\033[0m\n");
         }
         
         // CPU Max Performance
         snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/max_perf_pct", target_mode->cpu_max_perf);
         result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ CPU Max Performance: %d%%\033[0m\n", target_mode->cpu_max_perf);
+            printf("   CPU Max Performance: %d%%\033[0m\n", target_mode->cpu_max_perf);
             free(result);
         } else {
-            printf("   ⚠️  CPU Max Performance: Error al aplicar\033[0m\n");
+            printf("   Advertencia: CPU Max Performance: Error al aplicar\033[0m\n");
         }
         
         // CPU Min Performance
         snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/min_perf_pct", target_mode->cpu_min_perf);
         result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ CPU Min Performance: %d%%\033[0m\n", target_mode->cpu_min_perf);
+            printf("   CPU Min Performance: %d%%\033[0m\n", target_mode->cpu_min_perf);
             free(result);
         } else {
-            printf("   ⚠️  CPU Min Performance: Error al aplicar\033[0m\n");
+            printf("   Advertencia: CPU Min Performance: Error al aplicar\033[0m\n");
         }
         
         // Turbo Boost
         snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo", target_mode->turbo_boost);
         result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ Turbo Boost: %s\033[0m\n", target_mode->turbo_boost ? "OFF" : "ON");
+            printf("   Turbo Boost: %s\033[0m\n", target_mode->turbo_boost ? "OFF" : "ON");
             free(result);
         } else {
-            printf("   ⚠️  Turbo Boost: Error al aplicar\033[0m\n");
+            printf("   Advertencia: Turbo Boost: Error al aplicar\033[0m\n");
         }
         
         // Persistence Mode
         snprintf(cmd, sizeof(cmd), "sudo nvidia-smi -pm %d", target_mode->persist_mode);
         result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ Persistence Mode: %s\033[0m\n", target_mode->persist_mode ? "ON" : "OFF");
+            printf("   Persistence Mode: %s\033[0m\n", target_mode->persist_mode ? "ON" : "OFF");
             free(result);
         } else {
-            printf("   ⚠️  Persistence Mode: Error al aplicar\033[0m\n");
+            printf("   Advertencia: Persistence Mode: Error al aplicar\033[0m\n");
         }
         
         // Battery Conservation
         snprintf(cmd, sizeof(cmd), "sudo legion_cli --donotexpecthwmon batteryconservation-%s", target_mode->battery_conservation ? "enable" : "disable");
         result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ Battery Conservation: %s\033[0m\n", target_mode->battery_conservation ? "ON" : "OFF");
+            printf("   Battery Conservation: %s\033[0m\n", target_mode->battery_conservation ? "ON" : "OFF");
             free(result);
         } else {
-            printf("   ⚠️  Battery Conservation: Error al aplicar\033[0m\n");
+            printf("   Advertencia: Battery Conservation: Error al aplicar\033[0m\n");
         }
         
         // FnLock
         snprintf(cmd, sizeof(cmd), "sudo legion_cli --donotexpecthwmon fnlock-%s", target_mode->fnlock ? "enable" : "disable");
         result = execute_system_command(cmd);
         if (result) {
-            printf("   ✅ FnLock: %s\033[0m\n", target_mode->fnlock ? "ON" : "OFF");
+            printf("   FnLock: %s\033[0m\n", target_mode->fnlock ? "ON" : "OFF");
             free(result);
         } else {
-            printf("   ⚠️  FnLock: Error al aplicar\033[0m\n");
+            printf("   Advertencia: FnLock: Error al aplicar\033[0m\n");
         }
         
-        printf("\033[36m✅ Modo '%s' aplicado exitosamente!\033[0m\n", value);
+        printf("\033[36mModo '%s' aplicado exitosamente!\033[0m\n", value);
         
         free(modes);
     }
