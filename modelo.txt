@@ -10,6 +10,8 @@ mode: quiet
 - persist_mode: 1
 - battery_conservation: 1
 - fnlock: 0
+- rgb_color: blue
+- rgb_brightness: 30
 
 
 mode: balanced
@@ -20,6 +22,8 @@ mode: balanced
 - persist_mode: 1
 - battery_conservation: 0
 - fnlock: 1
+- rgb_color: white
+- rgb_brightness: 60
 
 
 mode: performance
@@ -30,3 +34,5 @@ mode: performance
 - persist_mode: 1
 - battery_conservation: 0
 - fnlock: 1
+- rgb_color: red
+- rgb_brightness: 100

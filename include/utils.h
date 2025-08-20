@@ -25,8 +25,16 @@ typedef struct {
     int persist_mode;
     int battery_conservation;
     int fnlock;
+    char rgb_color[20];      // Color RGB: "blue", "white", "red"
+    int rgb_brightness;      // Brillo RGB: 0-100
 } GPU_Mode;
 
 GPU_Mode* load_gpu_modes(const char* filename, int* num_modes);
+
+// Función para controlar RGB del teclado
+int set_rgb_color(const char* color, int brightness);
+
+// Función para obtener el color actual del botón de encendido
+const char* get_current_power_button_color(void);
 
 #endif // UTILS_H

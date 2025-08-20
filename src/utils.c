@@ -18,10 +18,12 @@ const char* parametros_validos[] = {
     "persist_mode", 
     "battery_conservation", 
     "fnlock", 
+    "rgb_color",
+    "rgb_brightness",
     "mode", 
     "modo"
 };
-const int num_parametros = 9;
+const int num_parametros = 11;
 
 // Comandos GPU válidos (solo los que realmente funcionan)
 const char* comandos_gpu_validos[] = {
@@ -185,6 +187,15 @@ GPU_Mode* load_gpu_modes(const char* filename, int* num_modes) {
                     current_mode->fnlock = atoi(value);
                     printf("   FnLock: %s\n", current_mode->fnlock ? "ON" : "OFF");
                 }
+                else if (strcmp(param_start, "rgb_color") == 0) {
+                    strncpy(current_mode->rgb_color, value, sizeof(current_mode->rgb_color) - 1);
+                    current_mode->rgb_color[sizeof(current_mode->rgb_color) - 1] = '\0';
+                    printf("   RGB Color: %s\n", current_mode->rgb_color);
+                }
+                else if (strcmp(param_start, "rgb_brightness") == 0) {
+                    current_mode->rgb_brightness = atoi(value);
+                    printf("   RGB Brightness: %d%%\n", current_mode->rgb_brightness);
+                }
             }
         }
     }
@@ -192,4 +203,91 @@ GPU_Mode* load_gpu_modes(const char* filename, int* num_modes) {
     fclose(file);
     printf("Cargados %d modos desde %s\n", *num_modes, filename);
     return modes;
+}
+
+// Función para controlar RGB del teclado
+int set_rgb_color(const char* color, int brightness) {
+    printf("\033[36m🎨 Configurando RGB: %s con brillo %d%%\033[0m\n", color, brightness);
+    
+    // El color del botón de encendido está vinculado al platform-profile
+    // Cambiamos el perfil para cambiar el color automáticamente
+    char cmd[256];
+    const char* profile = NULL;
+    
+    if (strcmp(color, "blue") == 0) {
+        printf("   🔵 Aplicando color azul (modo quiet)\n");
+        profile = "quiet";
+    }
+    else if (strcmp(color, "white") == 0) {
+        printf("   ⚪ Aplicando color blanco (modo balanced)\n");
+        profile = "balanced";
+    }
+    else if (strcmp(color, "red") == 0) {
+        printf("   🔴 Aplicando color rojo (modo performance)\n");
+        profile = "performance";
+    }
+    else {
+        printf("   ⚠️  Color no reconocido: %s\n", color);
+        return 0;
+    }
+    
+    // Cambiar platform-profile para cambiar el color del botón de encendido
+    snprintf(cmd, sizeof(cmd), "echo %s | sudo tee /sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile", profile);
+    
+    char* result = execute_system_command(cmd);
+    if (result) {
+        printf("   🎯 Platform-profile cambiado a '%s' - Color del botón de encendido: %s\n", profile, color);
+        free(result);
+    } else {
+        printf("   ⚠️  Error al cambiar platform-profile\n");
+        return 0;
+    }
+    
+    // Ajustar brillo del backlight del teclado
+    int max_brightness = 100; // Valor típico para backlight
+    
+    // Calcular brillo basado en el porcentaje
+    int actual_brightness = (brightness * max_brightness) / 100;
+    
+    snprintf(cmd, sizeof(cmd), "echo %d | sudo tee /sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/VPC2004:00/leds/platform::kbd_backlight/brightness", actual_brightness);
+    
+    result = execute_system_command(cmd);
+    if (result) {
+        printf("   💡 Brillo del teclado ajustado a %d%%\n", brightness);
+        free(result);
+        return 1;
+    } else {
+        printf("   ⚠️  Error al ajustar brillo del teclado\n");
+        return 0;
+    }
+}
+
+// Función para obtener el color actual del botón de encendido
+const char* get_current_power_button_color(void) {
+    char* result = execute_system_command("cat /sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile 2>/dev/null");
+    
+    if (!result) {
+        return "desconocido";
+    }
+    
+    // Eliminar salto de línea si existe
+    size_t len = strlen(result);
+    if (len > 0 && result[len-1] == '\n') {
+        result[len-1] = '\0';
+    }
+    
+    // Mapear perfil a color
+    if (strcmp(result, "quiet") == 0) {
+        free(result);
+        return "azul";
+    } else if (strcmp(result, "balanced") == 0) {
+        free(result);
+        return "blanco";
+    } else if (strcmp(result, "performance") == 0) {
+        free(result);
+        return "rojo";
+    } else {
+        free(result);
+        return "desconocido";
+    }
 }

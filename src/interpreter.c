@@ -742,6 +742,11 @@ void interpret_run_command(ASTNode* node) {
             printf("   Advertencia: FnLock: Error al aplicar\033[0m\n");
         }
         
+        // RGB Control
+        if (strlen(target_mode->rgb_color) > 0) {
+            set_rgb_color(target_mode->rgb_color, target_mode->rgb_brightness);
+        }
+        
         printf("\033[36mModo '%s' aplicado exitosamente!\033[0m\n", value);
         
         free(modes);

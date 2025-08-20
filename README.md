@@ -1,20 +1,17 @@
 # GLX - GPU Linux Extension
 
-> **Un lenguaje de programación interpretado para control de rendimiento del sistema, desarrollado por un estudiante de 18 años**
+Un lenguaje de programación interpretado para control de rendimiento del sistema, desarrollado en C para laptops gaming con GPU NVIDIA y características Lenovo Legion.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Made with C](https://img.shields.io/badge/Made%20with-C-blue.svg)](https://www.cprogramming.com/)
-[![Linux](https://img.shields.io/badge/Linux-Arch%20Linux-red.svg)](https://archlinux.org/)
+## Descripción
 
-## ¿Qué es GLX?
+GLX (GPU Linux Extension) es un lenguaje de programación interpretado que permite controlar el rendimiento de tu sistema Linux de manera intuitiva y eficiente. Diseñado específicamente para laptops gaming con GPU NVIDIA y características Lenovo Legion, proporciona control granular sobre CPU, GPU, batería y características RGB.
 
-**GLX** (GPU Linux Extension) es un lenguaje de programación interpretado escrito en C que permite controlar el rendimiento de tu sistema Linux de manera intuitiva y eficiente. Diseñado específicamente para laptops gaming con GPU NVIDIA y características Lenovo Legion.
-
-### Características principales
+## Características principales
 
 - **Control de GPU NVIDIA** - Gestión de rendimiento y configuraciones
 - **Control de CPU Intel** - Ajuste de rendimiento máximo/mínimo y Turbo Boost
 - **Gestión de batería** - Conservación de batería y optimización
+- **Control RGB** - Color del botón de encendido y brillo del teclado
 - **Modos predefinidos** - Quiet, Balanced y Performance
 - **Instalación global** - Usable desde cualquier directorio del sistema
 - **Fuzzy matching** - Sugerencias inteligentes para comandos
@@ -22,23 +19,29 @@
 
 ## Instalación
 
-### Requisitos previos
-```bash
-# En Arch Linux / Manjaro
-sudo pacman -S gcc make python-pillow
+### 1. Verificar compatibilidad
 
-# En Ubuntu / Debian
-sudo apt install gcc make python3-pil
-```
+Antes de instalar, verifica que tu sistema es compatible:
 
-### Instalación rápida
 ```bash
 git clone https://github.com/nicolaspaez-dot/GLX.git
 cd GLX
+chmod +x check_compatibility.sh
+./check_compatibility.sh
+```
+
+### 2. Instalación automática
+
+El script de instalación detecta automáticamente tu distribución y instala las dependencias necesarias:
+
+```bash
 ./install.sh
 ```
 
-Ahora puedes usar `gx` desde cualquier directorio.
+**Distribuciones soportadas:**
+- Arch Linux / Manjaro
+- Ubuntu / Debian
+- Fedora
 
 ## Uso básico
 
@@ -69,11 +72,11 @@ Ejecutar: `gx archivo.gx`
 
 ## Modos disponibles
 
-| Modo | CPU Max | CPU Min | Dynamic Boost | Turbo Boost | Batería |
-|------|---------|---------|---------------|-------------|---------|
-| **Quiet** | 60% | 20% | OFF | OFF | Conservación ON |
-| **Balanced** | 80% | 40% | ON | ON | Conservación OFF |
-| **Performance** | 100% | 60% | ON | ON | Conservación OFF |
+| Modo | CPU Max | CPU Min | Dynamic Boost | Turbo Boost | Batería | Color Botón | Brillo Teclado |
+|------|---------|---------|---------------|-------------|---------|-------------|----------------|
+| **Quiet** | 60% | 20% | OFF | OFF | Conservación ON | Azul | 30% |
+| **Balanced** | 80% | 40% | ON | ON | Conservación OFF | Blanco | 60% |
+| **Performance** | 100% | 60% | ON | ON | Conservación OFF | Rojo | 100% |
 
 ## Arquitectura técnica
 
@@ -102,37 +105,70 @@ Archivo .gx → Lexer → Parser → AST → Interpreter → Comandos del sistem
 - Fedora
 - Otras distribuciones con kernel Linux
 
+### Funcionalidades por hardware
+
+| Función | CPU Intel | GPU NVIDIA | Lenovo Legion | Otros |
+|---------|-----------|------------|---------------|-------|
+| Control CPU | ✅ | ❌ | ❌ | ❌ |
+| Control GPU | ❌ | ✅ | ❌ | ❌ |
+| Conservación batería | ❌ | ❌ | ✅ | ❌ |
+| Color botón encendido | ❌ | ❌ | ✅ | ❌ |
+| Brillo teclado | ❌ | ❌ | ✅ | ⚠️ |
+
 ## Estructura del proyecto
 
 ```
 GLX/
-├── src/            # Archivos fuente (.c)
-├── include/        # Headers (.h)
-├── gx_pruebas/     # Archivos de prueba
-├── install.sh      # Script de instalación
-├── uninstall.sh    # Script de desinstalación
-├── modelo.txt      # Configuraciones de modos
-└── README.md       # Este archivo
+├── src/                    # Archivos fuente (.c)
+├── include/               # Headers (.h)
+├── gx_pruebas/           # Archivos de prueba
+├── install.sh            # Script de instalación
+├── uninstall.sh          # Script de desinstalación
+├── check_compatibility.sh # Verificación de compatibilidad
+├── modelo.txt            # Configuraciones de modos
+└── README.md             # Este archivo
 ```
 
-## Sobre el desarrollador
+## Solución de problemas
 
-Soy un estudiante de 18 años que quiso crear algo útil para la comunidad. Este proyecto nació de mi curiosidad por entender cómo funcionan los lenguajes de programación y mi necesidad de tener un control más granular sobre el rendimiento de mi laptop gaming.
+### Error: "nvidia-smi no está disponible"
+```bash
+# Instalar drivers NVIDIA
+sudo pacman -S nvidia nvidia-utils  # Arch
+sudo apt install nvidia-driver      # Ubuntu
+```
 
-### ¿Por qué GLX?
-- **Aprendizaje**: Quería entender la implementación de lenguajes interpretados
-- **Necesidad**: Mi laptop necesitaba un control de rendimiento más flexible
-- **Desafío**: Crear algo útil desde cero con C
-- **Compartir**: Contribuir a la comunidad open source
+### Error: "legion_cli no está disponible"
+```bash
+# Para laptops Lenovo Legion
+sudo pacman -S linux-headers
+yay -S lenovolegionlinux-git
+```
 
-## Contacto
+### Error: "Intel P-State no está disponible"
+- Verifica que tienes un CPU Intel
+- Algunas funciones de CPU pueden no funcionar
 
-**Email**: nico.paezdelgadillospr@gmail.com
+### Error de compilación
+```bash
+# Verificar herramientas de compilación
+sudo pacman -S gcc make  # Arch
+sudo apt install gcc make # Ubuntu
+```
+
+### Permisos insuficientes
+```bash
+# Algunas funciones requieren sudo
+sudo gx run mode:performance
+```
+
+## Desarrollador
+
+**Nicolás Paez**
+
+- **Email**: nico.paezdelgadillospr@gmail.com
+- **GitHub**: [nicolaspaez-dot](https://github.com/nicolaspaez-dot)
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
-
----
-
-*Desarrollado con dedicación por un estudiante de 18 años* 
+Este proyecto está bajo la Licencia Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International - ver el archivo [LICENSE](LICENSE) para detalles.

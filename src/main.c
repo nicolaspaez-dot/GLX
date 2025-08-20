@@ -105,11 +105,20 @@ int main(int argc, char* argv[]) {
         char* battery_status = execute_system_command("cat /sys/class/power_supply/AC/online 2>/dev/null");
         
         if (cpu_max && cpu_min && dynamic_boost && turbo_boost && battery_status) {
+            // Eliminar saltos de línea de todos los valores
+            size_t len;
+            if ((len = strlen(cpu_max)) > 0 && cpu_max[len-1] == '\n') cpu_max[len-1] = '\0';
+            if ((len = strlen(cpu_min)) > 0 && cpu_min[len-1] == '\n') cpu_min[len-1] = '\0';
+            if ((len = strlen(dynamic_boost)) > 0 && dynamic_boost[len-1] == '\n') dynamic_boost[len-1] = '\0';
+            if ((len = strlen(turbo_boost)) > 0 && turbo_boost[len-1] == '\n') turbo_boost[len-1] = '\0';
+            if ((len = strlen(battery_status)) > 0 && battery_status[len-1] == '\n') battery_status[len-1] = '\0';
+            
             printf("   CPU Max Performance: %s%%\n", cpu_max);
             printf("   CPU Min Performance: %s%%\n", cpu_min);
             printf("   Dynamic Boost: %s\n", strcmp(dynamic_boost, "1") == 0 ? "ON" : "OFF");
             printf("   Turbo Boost: %s\n", strcmp(turbo_boost, "1") == 0 ? "OFF" : "ON");
             printf("   Estado de batería: %s\n", strcmp(battery_status, "1") == 0 ? "Enchufada" : "Con batería");
+            printf("   Color del botón de encendido: %s\n", get_current_power_button_color());
             
             free(cpu_max);
             free(cpu_min);
