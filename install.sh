@@ -134,26 +134,40 @@ if ! command -v legion_cli >/dev/null 2>&1; then
             # Verificar si yay está disponible
             if command -v yay >/dev/null 2>&1; then
                 echo "Instalando LenovoLegionLinux con yay..."
-                sudo pacman -S --noconfirm linux-headers
+                sudo pacman -S --noconfirm linux-headers python-pillow
                 yay -S --noconfirm lenovolegionlinux-git
             else
                 echo "yay no está disponible. Instala manualmente:"
-                echo "   sudo pacman -S linux-headers"
+                echo "   sudo pacman -S linux-headers python-pillow"
                 echo "   yay -S lenovolegionlinux-git"
             fi
             ;;
         "apt")
+            echo "Instalando dependencias de python..."
+            sudo apt install -y python3-pil
             echo "LenovoLegionLinux debe instalarse manualmente desde GitHub"
             echo "   Visita: https://github.com/johnfanv2/LenovoLegionLinux"
             ;;
         "dnf")
+            echo "Instalando dependencias de python..."
+            sudo dnf install -y python3-pillow
             echo "LenovoLegionLinux debe instalarse manualmente desde GitHub"
             echo "   Visita: https://github.com/johnfanv2/LenovoLegionLinux"
             ;;
     esac
-    echo "Algunas funciones específicas de Lenovo pueden no funcionar"
+    echo "Algunas funciones específicas de Lenovo pueden no funcionar si no instalaste lenovolegionlinux"
 else
     echo "legion_cli ya está instalado"
+    # Verificar dependencias de python incluso si legion_cli está instalado
+    if ! python3 -c "import PIL" >/dev/null 2>&1; then
+        echo "Faltan dependencias de python (pillow). Instalando..."
+        pkg_manager=$(detect_package_manager)
+        case $pkg_manager in
+            "pacman") sudo pacman -S --noconfirm python-pillow ;;
+            "apt") sudo apt install -y python3-pil ;;
+            "dnf") sudo dnf install -y python3-pillow ;;
+        esac
+    fi
 fi
 
 # Verificar archivos del sistema necesarios

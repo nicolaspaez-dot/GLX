@@ -216,7 +216,7 @@ int set_rgb_color(const char* color, int brightness) {
     
     if (strcmp(color, "blue") == 0) {
         printf("   🔵 Aplicando color azul (modo quiet)\n");
-        profile = "quiet";
+        profile = "low-power";
     }
     else if (strcmp(color, "white") == 0) {
         printf("   ⚪ Aplicando color blanco (modo balanced)\n");
@@ -232,7 +232,15 @@ int set_rgb_color(const char* color, int brightness) {
     }
     
     // Cambiar platform-profile para cambiar el color del botón de encendido
-    snprintf(cmd, sizeof(cmd), "echo %s | sudo tee /sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile", profile);
+    // Intentar primero la ruta moderna (kernel 6.x+)
+    char path[256] = "/sys/firmware/acpi/platform_profile";
+    
+    // Si no existe, intentar la ruta legacy
+    if (access(path, F_OK) == -1) {
+        strcpy(path, "/sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile");
+    }
+
+    snprintf(cmd, sizeof(cmd), "echo %s | sudo tee %s", profile, path);
     
     char* result = execute_system_command(cmd);
     if (result) {
@@ -264,7 +272,21 @@ int set_rgb_color(const char* color, int brightness) {
 
 // Función para obtener el color actual del botón de encendido
 const char* get_current_power_button_color(void) {
-    char* result = execute_system_command("cat /sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile 2>/dev/null");
+    // Intentar leer de múltiples ubicaciones posibles
+    const char* paths[] = {
+        "/sys/firmware/acpi/platform_profile",
+        "/sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile"
+    };
+    
+    char* result = NULL;
+    for (int i = 0; i < 2; i++) {
+        if (access(paths[i], R_OK) == 0) {
+            char cmd[512];
+            snprintf(cmd, sizeof(cmd), "cat %s 2>/dev/null", paths[i]);
+            result = execute_system_command(cmd);
+            if (result) break;
+        }
+    }
     
     if (!result) {
         return "desconocido";
@@ -277,7 +299,7 @@ const char* get_current_power_button_color(void) {
     }
     
     // Mapear perfil a color
-    if (strcmp(result, "quiet") == 0) {
+    if (strcmp(result, "low-power") == 0 || strcmp(result, "quiet") == 0) {
         free(result);
         return "azul";
     } else if (strcmp(result, "balanced") == 0) {

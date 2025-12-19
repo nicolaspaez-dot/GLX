@@ -37,7 +37,14 @@ echo ""
 echo "LAPTOP LENOVO LEGION:"
 if command -v legion_cli >/dev/null 2>&1; then
     echo "   legion_cli disponible"
-    echo "   Funciones específicas de Lenovo disponibles"
+    # Verificar si funciona (dependencias de python)
+    if python3 -c "import PIL" >/dev/null 2>&1; then
+        echo "   Dependencias python (pillow): OK"
+        echo "   Funciones específicas de Lenovo disponibles"
+    else
+        echo "   ⚠️ ERROR: Faltan dependencias de python (pillow)"
+        echo "   Las funciones de batería fallarán. Instala: sudo pacman -S python-pillow"
+    fi
 elif [ -f "/sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/platform-profile/platform-profile-0/profile" ]; then
     echo "   platform-profile disponible pero legion_cli no instalado"
     echo "   Instala LenovoLegionLinux para funcionalidad completa:"
